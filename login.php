@@ -35,7 +35,7 @@
 				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="customers.php">Gestión de clientes</a>
+							<a class="nav-link" href="clients.php">Gestión de clientes</a>
 						</li>
 					</ul>
 				</div>

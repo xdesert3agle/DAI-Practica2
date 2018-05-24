@@ -1,13 +1,14 @@
 <?php
 	
 	include('dbconnection.php');
+	include('client_class.php');
 	include('util.php');
 
 	if (!isLogged()) {
 		header("Location: login.php");
 	}
 
-	$query = 'SELECT * FROM CLIENTES';
+	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
 	$queryResult = $conn->query($query);
 
 ?>
@@ -19,15 +20,18 @@
 	</head>
 
 	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="index.php">Taller</a>
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="clients.php">Gestión de clientes</a>
+					</li>
 				</ul>
 			</div>
 			<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
 				<ul class="navbar-nav ml-auto">
-					<li class="nav-item">
+                    <li class="nav-item">
 						<a class="nav-link" href="login.php">Acceso administrador</a>
 					</li>
 				</ul>
@@ -35,8 +39,13 @@
 		</nav>
 
 		<div class="container" style="margin-top: 15px">
-			<h2>Listado de clientes</h2>
+
 			<form action="">
+				<input type='hidden' id='action' name='action' value='user_delete'>
+				<div class="form-inline">
+					<h2>Listado de clientes</h2>
+					<a href="index.asp" class="btn btn-danger ml-auto p-1 m-0">Eliminar</a>
+				</div>
 				<table class="table table-hover">
 					<thead>
 						<tr>
@@ -52,61 +61,69 @@
 							<th>Provincia</th>
 							<th>Teléfono</th>
 							<th>E-mail</th>
+							<th>Detalles</th>
 						</tr>
 					</thead>
 					<tbody>
-					<?php
-						
-						while ($customer = $queryResult->fetch_assoc()) {
+						<?php
 
+						$client = new Client;
+
+						for ($i = 0; $i < mysqli_num_rows($queryResult); $i++) {
+							$client = parseClient($queryResult);
 					?>
 							<tr>
-								<td>
+								<td class="align-middle">
 									<input type="checkbox" />
 								</td>
 								<th scope="row" class="align-middle">
-									<?=$customer['id_cliente']?>
+									<?=$client->getId();?>
 								</th>
 								<td class="align-middle">
-									<img class="customer-img" src="data:image/jpeg;base64,<?=base64_encode($customer['fotografia'])?>" />
+									<img class="customer-img" src="<?=$client->getAvatar()?>" />
 								</td>
 								<td class="align-middle">
-									<?=$customer['dni']?>
+									<?=$client->getDni()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['nombre']?>
+									<?=$client->getName()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['apellido1'] . ' ' . $customer['apellido2']?>
+									<?=$client->getSurname1() . ' ' . $client->getSurname2()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['direccion']?>
+									<?=$client->getAddress()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['cp']?>
+									<?=$client->getPostalCode()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['poblacion']?>
+									<?=$client->getLocation()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['provincia']?>
+									<?=$client->getProvince()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['telefono']?>
+									<?=$client->getTelephone()?>
 								</td>
 								<td class="align-middle">
-									<?=$customer['email']?>
+									<?=$client->getEmail()?>
+								</td>
+								<td class="align-middle">
+									<!-- TODO: Volver al mismo, pero esta vez con el ID cogido; printear los detalles en vez del form (switch) -->
+									<form action="" method="POST" class="p-0 m-0">
+										<input type="hidden" id="customerID" name="customerID" value="<?=$customer['id_cliente']?>" />
+										<button type="button" class="btn btn-primary ml-auto p-1 m-1">Detalles</button>
+									</form>
 								</td>
 							</tr>
-					<?php
+							<?php
 						
 						}
 
 					?>
 					</tbody>
 				</table>
-
-				<button type="button" class="btn btn-danger">Eliminar</button>
 			</form>
 		</div>
 	</body>
