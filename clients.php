@@ -46,18 +46,6 @@
 		</nav>
 
 		<div class="container" style="margin-top: 15px">
-		<?php
-
-			if (isset($_POST['action'])) {
-				$action = $_POST['action'];
-			} else {
-				$action = "";
-			}
-			
-			switch ($action) {
-				case "":
-
-		?>
 			<form action="delete_client.php" method="POST">
 				<input type='hidden' id='action' name='action' value='user_delete'>
 				<table class="table table-hover no-top-thead">
@@ -68,14 +56,12 @@
 							</th>
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
-									<input type="hidden" id="client_id" name="client_id" value="<?=$client['id_cliente']?>" />
-									<button type="submit" class="btn btn-danger p-1 m-1" value="delete_selected">Eliminar selecc.</button>
+									<input type="hidden" id="client_id" name="client_id" value="<?php echo $client['id_cliente']?>" />
+									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected">Eliminar selecc.</button>
 								</form>
-								<a href="new_client.php" class="btn btn-primary p-1 m-1" value="add_new">Añadir nuevo</a>
+								<a href="new_client.php" class="btn btn-primary p-1 mr-0" value="add_new">Añadir nuevo</a>
 							</th>
-						</tr>	
-					</thead>
-					<thead>
+						</tr>
 						<tr>
 							<th></th>
 							<th>#</th>
@@ -89,7 +75,6 @@
 							<th>Provincia</th>
 							<th>Teléfono</th>
 							<th>E-mail</th>
-							<th>Detalles</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -100,48 +85,43 @@
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
 							$client = parseClient($result);
 					?>
-							<tr onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId();?>')">
+							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks-->
+							<tr>
 								<td class="align-middle">
-									<input type="checkbox" name="id[]" value="<?php echo $client->getId();?>" onClick="stopCheckbox(this);"/>
+									<input type="checkbox" name="id[]" value="<?php echo $client->getId(); ?>" onClick="stopCheckbox(this);"/>
 								</td>
-								<th scope="row" class="align-middle">
-									<?=$client->getId();?>
+								<th scope="row" class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getId(); ?>
 								</th>
-								<td class="align-middle">
-									<img class="client-img" src="<?=$client->getAvatar()?>" />
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<img class="client-img" src="<?php echo $client->getAvatar()?>" />
 								</td>
-								<td class="align-middle">
-									<?=$client->getDni()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getDni()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getName()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getName()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getSurname1() . ' ' . $client->getSurname2()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getSurname1() . ' ' . $client->getSurname2()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getAddress()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getAddress()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getPostalCode()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getPostalCode()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getLocation()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getLocation()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getProvince()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getProvince()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getTelephone()?>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getTelephone()?>
 								</td>
-								<td class="align-middle">
-									<?=$client->getEmail()?>
-								</td>
-								<td class="align-middle">
-									<form action="client_details.php" method="GET" id="formulario" class="p-0 m-0">
-										<input type="hidden" id="client_id" name="client_id" value="<?=$client->getID()?>" />
-										<button type="submit" class="btn btn-primary ml-auto p-1 m-1">Detalles</button>
-									</form>
+								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+									<?php echo $client->getEmail()?>
 								</td>
 							</tr>
 							<?php
@@ -152,11 +132,6 @@
 					</tbody>
 				</table>
 			</form>
-			<?php
-					break;
-			}
-
-		?>
 		</div>
 	</body>
 </html>
