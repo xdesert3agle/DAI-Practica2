@@ -2,7 +2,9 @@
 	
 	include('dbconnection.php');
 	include('client_class.php');
-	include "util.php";
+    include('util.php');
+
+    $imageError = false;
 
 	if (!isLogged()) {
 		header("Location: login.php");
@@ -28,15 +30,58 @@
         $province = $_POST['province'];
         $telephone = $_POST['telephone'];
         $email = $_POST['email'];
+        $photo = "getPhotoFromClientID($id)";
 
-        $conn->query("UPDATE CLIENTES SET dni ='" .$dni. "', nombre ='" .$name.  "', apellido1 ='" .$surname1. "', apellido2 = '" .$surname2 . "', direccion ='" .$address. "', cp = '" .$postal_code. "', poblacion ='" .$location. "', provincia = '" .$province. "', telefono ='" .$telephone. "', email ='" .$email. "' WHERE id_cliente = " .$id);
+        if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
+            $uploaded_photo = $_FILES["photo"]["tmp_name"];
 
-        header("Location: clients.php");
+            // Formatos de imagen soportados
+            switch (exif_imagetype($_FILES["photo"]["tmp_name"])) {
+                case IMAGETYPE_JPEG:
+                    $created_photo = imagecreatefromjpeg($uploaded_photo);
+                    
+                    ob_start();
+                    
+                    imagejpeg($created_photo);
+                    
+                    $photo = ob_get_contents();
+                    
+                    ob_end_clean();
+                    
+                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    break;
 
-    } else {
+                case IMAGETYPE_PNG:
+                    $created_photo = imagecreatefrompng($uploaded_photo);
+                    
+                    ob_start();
+                    
+                    imagepng($created_photo);
+                    
+                    $photo = ob_get_contents();
+                    
+                    ob_end_clean();
+                    
+                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    break;
+
+                default:
+                    $imageError = true;
+                    break;
+            }
+
+            if (!$imageError) {
+                $conn->query("UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email', fotografia = '$photo' WHERE id_cliente = '$id'");
+                header("Location: clients.php");
+            }
+
+        } else {
+            $conn->query("UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email' WHERE id_cliente = '$id'");
+            header("Location: clients.php");
+        }        
+    }
 
 ?>
-
 <html>
     <head>
 		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
@@ -64,7 +109,7 @@
         <div class="container" style="margin-top: 15px">
             <h2>Editar cliente</h2>
             <hr>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="id[]" value="<?php echo $client->getId(); ?>">
                 <div class="row">
                     <div class="form-group col-sm">
@@ -123,8 +168,8 @@
                         <input type="text" class="form-control" name="email" value="<?php echo $client->getEmail(); ?>" maxlength="50">
                     </div>
                     <div class="form-group col-sm">
-                        <label for="file">Fotografía</label>
-                        <input type="file" class="form-control-file" name="">
+                        <label for="photo">Fotografía</label>
+                        <input type="file" class="form-control-file" name="photo">
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -136,12 +181,22 @@
                     </div>
                 </div>
             </form>
+            <?php
+
+                if ($imageError) {
+                    
+            ?>
+
+            <div class="alert alert-danger" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">
+                <h4 class="mb-0">Error al editar la información del cliente.</h4>
+                <p class="mb-0">Formato de imagen no soportado.</p>
+            </div>
+                
+            <?php
+            
+                }
+
+            ?>
         </div>
     </body>
 </html>
-
-<?php
-
-    }
-
-?>

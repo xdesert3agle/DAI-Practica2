@@ -15,17 +15,13 @@
 	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
 	$result = $conn->query($query);
 
-	
-
 ?>
-	<html>
-
+<html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="./style/custom.css" />
 		<script src="./js/lib.js"></script>
 	</head>
-
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="index.php">Taller</a>
@@ -44,7 +40,6 @@
 				</ul>
 			</div>
 		</nav>
-
 		<div class="container" style="margin-top: 15px">
 			<form action="delete_client.php" method="POST">
 				<input type='hidden' id='action' name='action' value='user_delete'>
@@ -85,7 +80,7 @@
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
 							$client = parseClient($result);
 					?>
-							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks-->
+							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks -->
 							<tr>
 								<td class="align-middle">
 									<input type="checkbox" name="id[]" value="<?php echo $client->getId(); ?>" onClick="stopCheckbox(this);"/>
@@ -94,7 +89,7 @@
 									<?php echo $client->getId(); ?>
 								</th>
 								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
-									<img class="client-img" src="<?php echo $client->getAvatar()?>" />
+									<img class="client-img" src="<?php echo $client->getPhoto()?>" />
 								</td>
 								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getDni()?>

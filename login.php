@@ -55,7 +55,6 @@
 					<h3 class="mb-0">Bienvenido, miguelangel.</h3>
 					<p class="mb-0">Haz click <a href="logout.php">aquí</a> para cerrar tu sesión.</p>
 				</div>
-					
 			</div>
 			<?php
 

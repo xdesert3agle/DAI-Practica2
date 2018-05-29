@@ -11,7 +11,7 @@
         private $province;
         private $telephone;
         private $email;
-        private $avatar;
+        private $photo;
 
         public function getId(){
             return $this->id;
@@ -101,12 +101,12 @@
             $this->email = $email;
         }
     
-        public function getAvatar(){
-            return $this->avatar;
+        public function getPhoto(){
+            return $this->photo;
         }
     
-        public function setAvatar($avatar){
-            $this->avatar = $avatar;
+        public function setPhoto($photo){
+            $this->photo = $photo;
         }
     }
 
@@ -137,9 +137,13 @@
         $client->setProvince($result['provincia']);
         $client->setTelephone($result['telefono']);
         $client->setEmail($result['email']);
-        $client->setAvatar("data:image/jpeg;base64," . base64_encode($result['fotografia']));
+        $client->setPhoto("data:image/png;base64," . base64_encode($result['fotografia']));
         
         return $client;
+    }
+
+    function getPhotoFromClientID($id){
+        return getClientWithID($id)->getPhoto();
     }
     
 ?>
