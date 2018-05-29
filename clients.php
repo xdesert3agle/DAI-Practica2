@@ -9,7 +9,7 @@
 	}
 
 	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
-	$queryResult = $conn->query($query);
+	$result = $conn->query($query);
 
 ?>
 	<html>
@@ -20,11 +20,11 @@
 	</head>
 
 	<body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="index.php">Taller</a>
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item">
+					<li class="nav-item active">
 						<a class="nav-link" href="clients.php">Gestión de clientes</a>
 					</li>
 				</ul>
@@ -39,12 +39,24 @@
 		</nav>
 
 		<div class="container" style="margin-top: 15px">
-
+		<?php
+			if (isset($_POST['action'])) {
+				$action = $_POST['action'];
+			} else {
+				$action = "";
+			}
+			
+			switch ($action) {
+				case "":
+		?>
 			<form action="">
 				<input type='hidden' id='action' name='action' value='user_delete'>
 				<div class="form-inline">
 					<h2>Listado de clientes</h2>
-					<a href="index.asp" class="btn btn-danger ml-auto p-1 m-0">Eliminar</a>
+					<form action="" method="POST" class="p-0 m-0">
+						<input type="hidden" id="clientID" name="clientID" value="<?=$client['id_cliente']?>" />
+						<button type="submit" class="btn btn-danger ml-auto p-1 m-0">Eliminar</button>
+					</form>
 				</div>
 				<table class="table table-hover">
 					<thead>
@@ -65,12 +77,12 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php
+					<?php
 
-						$client = new Client;
+						$client = new Client($conn);
 
-						for ($i = 0; $i < mysqli_num_rows($queryResult); $i++) {
-							$client = parseClient($queryResult);
+						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+							$client = parseClient($result);
 					?>
 							<tr>
 								<td class="align-middle">
@@ -80,7 +92,7 @@
 									<?=$client->getId();?>
 								</th>
 								<td class="align-middle">
-									<img class="customer-img" src="<?=$client->getAvatar()?>" />
+									<img class="client-img" src="<?=$client->getAvatar()?>" />
 								</td>
 								<td class="align-middle">
 									<?=$client->getDni()?>
@@ -110,10 +122,9 @@
 									<?=$client->getEmail()?>
 								</td>
 								<td class="align-middle">
-									<!-- TODO: Volver al mismo, pero esta vez con el ID cogido; printear los detalles en vez del form (switch) -->
-									<form action="" method="POST" class="p-0 m-0">
-										<input type="hidden" id="customerID" name="customerID" value="<?=$customer['id_cliente']?>" />
-										<button type="button" class="btn btn-primary ml-auto p-1 m-1">Detalles</button>
+									<form action="client_details.php" method="POST" class="p-0 m-0">
+										<input type="hidden" id="clientID" name="clientID" value="<?=$client->getID()?>" />
+										<button type="submit" class="btn btn-primary ml-auto p-1 m-1">Detalles</button>
 									</form>
 								</td>
 							</tr>
@@ -125,7 +136,15 @@
 					</tbody>
 				</table>
 			</form>
+			<?php
+					break;
+
+				case "delete_client":
+					
+					break;
+			}
+
+		?>
 		</div>
 	</body>
-
-	</html>
+</html>

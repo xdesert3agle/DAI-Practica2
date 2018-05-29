@@ -1,5 +1,4 @@
 <?php
-
     class Client {
         private $id;
         private $dni;
@@ -111,10 +110,22 @@
         }
     }
 
-    function parseClient($queryResult){
-        $result = $queryResult->fetch_assoc();
+    function getClientWithID($id){
+        global $conn;
+
+        $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
+        $result = $conn->query($query);
 
         $client = new Client;
+        $client = parseClient($result);
+        
+        return $client;
+    }
+
+    function parseClient($result){
+        $result = $result->fetch_assoc();
+        
+        $client = new Client();
         $client->setId($result['id_cliente']);
         $client->setDni($result['dni']);
         $client->setName($result['nombre']);
@@ -130,5 +141,5 @@
         
         return $client;
     }
-
+    
 ?>
