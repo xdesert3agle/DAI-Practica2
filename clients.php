@@ -7,9 +7,15 @@
 	if (!isLogged()) {
 		header("Location: login.php");
 	}
+	
+	if (isset($_POST['edit_client'])){
+	
+	}
 
 	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
 	$result = $conn->query($query);
+
+	
 
 ?>
 	<html>
@@ -17,6 +23,7 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="./style/custom.css" />
+		<script src="./js/lib.js"></script>
 	</head>
 
 	<body>
@@ -40,6 +47,7 @@
 
 		<div class="container" style="margin-top: 15px">
 		<?php
+
 			if (isset($_POST['action'])) {
 				$action = $_POST['action'];
 			} else {
@@ -48,17 +56,25 @@
 			
 			switch ($action) {
 				case "":
+
 		?>
-			<form action="">
+			<form action="delete_client.php" method="POST">
 				<input type='hidden' id='action' name='action' value='user_delete'>
-				<div class="form-inline">
-					<h2>Listado de clientes</h2>
-					<form action="" method="POST" class="p-0 m-0">
-						<input type="hidden" id="clientID" name="clientID" value="<?=$client['id_cliente']?>" />
-						<button type="submit" class="btn btn-danger ml-auto p-1 m-0">Eliminar</button>
-					</form>
-				</div>
-				<table class="table table-hover">
+				<table class="table table-hover no-top-thead">
+					<thead>
+						<tr>
+							<th colspan="5">
+								<h2>Listado de clientes</h2>
+							</th>
+							<th colspan="8" class="text-right">
+								<form action="" method="POST" class="p-0 m-0">
+									<input type="hidden" id="client_id" name="client_id" value="<?=$client['id_cliente']?>" />
+									<button type="submit" class="btn btn-danger p-1 m-1" value="delete_selected">Eliminar selecc.</button>
+								</form>
+								<a href="new_client.php" class="btn btn-primary p-1 m-1" value="add_new">Añadir nuevo</a>
+							</th>
+						</tr>	
+					</thead>
 					<thead>
 						<tr>
 							<th></th>
@@ -84,9 +100,9 @@
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
 							$client = parseClient($result);
 					?>
-							<tr>
+							<tr onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId();?>')">
 								<td class="align-middle">
-									<input type="checkbox" />
+									<input type="checkbox" name="id[]" value="<?php echo $client->getId();?>" onClick="stopCheckbox(this);"/>
 								</td>
 								<th scope="row" class="align-middle">
 									<?=$client->getId();?>
@@ -122,8 +138,8 @@
 									<?=$client->getEmail()?>
 								</td>
 								<td class="align-middle">
-									<form action="client_details.php" method="POST" class="p-0 m-0">
-										<input type="hidden" id="clientID" name="clientID" value="<?=$client->getID()?>" />
+									<form action="client_details.php" method="GET" id="formulario" class="p-0 m-0">
+										<input type="hidden" id="client_id" name="client_id" value="<?=$client->getID()?>" />
 										<button type="submit" class="btn btn-primary ml-auto p-1 m-1">Detalles</button>
 									</form>
 								</td>
@@ -137,10 +153,6 @@
 				</table>
 			</form>
 			<?php
-					break;
-
-				case "delete_client":
-					
 					break;
 			}
 

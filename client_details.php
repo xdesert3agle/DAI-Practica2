@@ -8,21 +8,31 @@
 		header("Location: login.php");
 	}
     
-    if (isset($_POST['clientID'])) {
-        $selClientID = $_POST['clientID'];
+    if (isset($_GET['client_id'])) {
+        $selClientID = $_GET['client_id'];
 
         $client = new Client($conn);
         $client = getClientWithID($selClientID);
     }
-    
-    if (isset($_POST['action'])) {
-        $action = $_POST['action'];
-    } else {
-        $action = "";
-    }
 
-    switch ($action) {
-        case "":  
+    if (isset($_GET['edit_client'])){
+        $id = $_GET['id'];
+        $dni = $_GET['dni'];
+        $name = $_GET['name'];
+        $surname1 = $_GET['surname1'];
+        $surname2 = $_GET['surname2'];
+        $address = $_GET['address'];
+        $postal_code = $_GET['postal_code'];
+        $location = $_GET['location'];
+        $province = $_GET['province'];
+        $telephone = $_GET['telephone'];
+        $email = $_GET['email'];
+
+        $conn->query("UPDATE CLIENTES SET dni ='" .$dni. "', nombre ='" .$name.  "', apellido1 ='" .$surname1. "', apellido2 = '" .$surname2 . "', direccion ='" .$address. "', cp = '" .$postal_code. "', poblacion ='" .$location. "', provincia = '" .$province. "', telefono ='" .$telephone. "', email ='" .$email. "' WHERE id_cliente = " .$id);
+        
+        header("Location: clients.php");
+
+    } else {
 
 ?>
 
@@ -31,7 +41,6 @@
 		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="./style/custom.css" />
 	</head>
-    <body>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="index.php">Taller</a>
@@ -54,9 +63,8 @@
         <div class="container" style="margin-top: 15px">
             <h2>Editar cliente</h2>
             <hr>
-            <form action="" method="POST">
-                <input type="hidden" name="action" value="edit_client">
-                <input type="hidden" name="id" value="<?php echo $client->getId(); ?>">
+            <form action="delete_client.php" method="POST">
+                <input type="hidden" name="id[]" value="<?php echo $client->getId(); ?>">
                 <div class="row">
                     <div class="form-group col-sm">
                         <label for="id">ID</label>
@@ -64,79 +72,63 @@
                     </div>
                     <div class="form-group col-sm">
                         <label for="dni">DNI</label>
-                        <input type="text" class="form-control" name="dni" value="<?php echo $client->getDni(); ?>">
+                        <input type="text" class="form-control" name="dni" value="<?php echo $client->getDni(); ?>" maxlength="9">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm">
                         <label for="surname1">Apellido 1</label>
-                        <input type="text" class="form-control" name="surname1" value="<?php echo $client->getSurname1(); ?>">
+                        <input type="text" class="form-control" name="surname1" value="<?php echo $client->getSurname1(); ?>" maxlength="30">
                     </div>
                     <div class="form-group col-sm">
                         <label for="surname2">Apellido 2</label>
-                        <input type="text" class="form-control" name="surname2" value="<?php echo $client->getSurname2(); ?>">
+                        <input type="text" class="form-control" name="surname2" value="<?php echo $client->getSurname2(); ?>" maxlength="30">
                     </div>
                     <div class="form-group col-sm">
                         <label for="name">Nombre</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo $client->getName(); ?>">
+                        <input type="text" class="form-control" name="name" value="<?php echo $client->getName(); ?>" maxlength="30">
                     </div>
                 </div>  
                     
                 <div class="row">
                     <div class="form-group col-sm">
                         <label for="address">Dirección</label>
-                        <input type="text" class="form-control" name="address" value="<?php echo $client->getAddress(); ?>">
+                        <input type="text" class="form-control" name="address" value="<?php echo $client->getAddress(); ?>" maxlength="50">
                     </div>
                     <div class="form-group col-2">
                         <label for="postal_code">CP</label>
-                        <input type="text" class="form-control" name="postal_code" value="<?php echo $client->getPostalCode(); ?>">
+                        <input type="text" class="form-control" name="postal_code" value="<?php echo $client->getPostalCode(); ?>" maxlength="5">
                     </div>
                     <div class="form-group col-3">
                         <label for="location">Población</label>
-                        <input type="text" class="form-control" name="location" value="<?php echo $client->getLocation(); ?>">
+                        <input type="text" class="form-control" name="location" value="<?php echo $client->getLocation(); ?>" maxlength="30">
                     </div>
                     <div class="form-group col-2">
                         <label for="province">Provincia</label>
-                        <input type="text" class="form-control" name="province" value="<?php echo $client->getProvince(); ?>">
+                        <input type="text" class="form-control" name="province" value="<?php echo $client->getProvince(); ?>" maxlength="30">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm">
                         <label for="telephone">Teléfono</label>
-                        <input type="text" class="form-control" name="telephone" value="<?php echo $client->getTelephone(); ?>">
+                        <input type="text" class="form-control" name="telephone" value="<?php echo $client->getTelephone(); ?>" maxlength="15">
                     </div>
                     <div class="form-group col-sm">
                         <label for="email">E-mail</label>
-                        <input type="text" class="form-control" name="email" value="<?php echo $client->getEmail(); ?>">
+                        <input type="text" class="form-control" name="email" value="<?php echo $client->getEmail(); ?>" maxlength="50">
                     </div>
                     <div class="form-group col-sm">
-                        <button type="submit" class="btn btn-primary align-bottom" style="margin-top: 31px; margin-left: 40px;">Editar cliente</button>
-                        <button type="submit" class="btn btn-danger align-bottom float-right" style="margin-top: 31px;">Eliminar cliente</button>
+                        <button type="submit" class="btn btn-primary align-bottom" name="edit_client" style="margin-top: 31px; margin-left: 40px;">Editar cliente</button>
+                        <button type="submit" class="btn btn-danger align-bottom float-right" name="delete_client" style="margin-top: 31px;">Eliminar cliente</button>
                     </div>
                 </div>
             </form>
         </div>
     </body>
 </html>
-<?php
-        break;
-        
-        case "edit_client":
-            $id = $_POST['id'];
-            $dni = $_POST['dni'];
-            $name = $_POST['name'];
-            $surname1 = $_POST['surname1'];
-            $surname2 = $_POST['surname2'];
-            $address = $_POST['address'];
-            $postal_code = $_POST['postal_code'];
-            $location = $_POST['location'];
-            $province = $_POST['province'];
-            $telephone = $_POST['telephone'];
-            $email = $_POST['email'];
 
-            $result = $conn->query("UPDATE CLIENTES SET dni ='" .$dni. "', nombre ='" .$name.  "', apellido1 ='" .$surname1. "', apellido2 = '" .$surname2 . "', direccion ='" .$address. "', cp = '" .$postal_code. "', poblacion ='" .$location. "', provincia = '" .$province. "', telefono ='" .$telephone. "', email ='" .$email. "' WHERE id_cliente = " .$id);
-            
-            header("Location: clients.php");
+<?php
+
     }
 
 ?>

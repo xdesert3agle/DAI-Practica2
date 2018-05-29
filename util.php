@@ -1,6 +1,6 @@
 <?php
 
-    function isLogged(){
+    function isLogged() {
         if(!isset($_SESSION)) {
             session_start();
         }
