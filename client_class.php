@@ -108,6 +108,26 @@
         public function setPhoto($photo){
             $this->photo = $photo;
         }
+
+        public static function parseClient($result){
+            $result = $result->fetch_assoc();
+            
+            $client = new Client;
+            $client->setId($result['id_cliente']);
+            $client->setDni($result['dni']);
+            $client->setName($result['nombre']);
+            $client->setSurname1($result['apellido1']);
+            $client->setSurname2($result['apellido2']);
+            $client->setAddress($result['direccion']);
+            $client->setPostalCode($result['cp']);
+            $client->setLocation($result['poblacion']);
+            $client->setProvince($result['provincia']);
+            $client->setTelephone($result['telefono']);
+            $client->setEmail($result['email']);
+            $client->setPhoto("data:image/png;base64," . base64_encode($result['fotografia']));
+            
+            return $client;
+        }
     }
 
     function getClientWithID($id){
@@ -117,33 +137,11 @@
         $result = $conn->query($query);
 
         $client = new Client;
-        $client = parseClient($result);
+        $client = Client::parseClient($result);
         
         return $client;
     }
 
-    function parseClient($result){
-        $result = $result->fetch_assoc();
-        
-        $client = new Client();
-        $client->setId($result['id_cliente']);
-        $client->setDni($result['dni']);
-        $client->setName($result['nombre']);
-        $client->setSurname1($result['apellido1']);
-        $client->setSurname2($result['apellido2']);
-        $client->setAddress($result['direccion']);
-        $client->setPostalCode($result['cp']);
-        $client->setLocation($result['poblacion']);
-        $client->setProvince($result['provincia']);
-        $client->setTelephone($result['telefono']);
-        $client->setEmail($result['email']);
-        $client->setPhoto("data:image/png;base64," . base64_encode($result['fotografia']));
-        
-        return $client;
-    }
-
-    function getPhotoFromClientID($id){
-        return getClientWithID($id)->getPhoto();
-    }
+    
     
 ?>

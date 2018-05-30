@@ -8,9 +8,11 @@
 
 ?>
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-    </head>
+	<head>
+		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
+        <script src="./js/lib.js"></script>
+	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="index.php">Taller</a>

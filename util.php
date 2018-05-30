@@ -12,4 +12,12 @@
         return false;
     }
 
+    function getNewClientID(){
+        global $conn;
+
+        $result = $conn->query("SELECT * FROM CLIENTES WHERE ID_CLIENTE = (SELECT MAX(ID_CLIENTE) FROM CLIENTES)");
+
+        return $result->fetch_assoc()['id_cliente'] + 1;
+    }
+
 ?>

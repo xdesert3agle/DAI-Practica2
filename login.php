@@ -21,9 +21,11 @@
 ?>
 
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-    </head>
+	<head>
+		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
+        <script src="./js/lib.js"></script>
+	</head>
     <body>
 			<?php
 
@@ -52,7 +54,7 @@
 				<hr>
 
 				<div class="alert alert-success" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">
-					<h3 class="mb-0">Bienvenido, miguelangel.</h3>
+					<h3 class="mb-0 ">Bienvenido, miguelangel.</h3>
 					<p class="mb-0">Haz click <a href="logout.php">aquí</a> para cerrar tu sesión.</p>
 				</div>
 			</div>

@@ -19,8 +19,8 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="./style/custom.css" />
-		<script src="./js/lib.js"></script>
+        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
+        <script src="./js/lib.js"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -40,14 +40,14 @@
 				</ul>
 			</div>
 		</nav>
-		<div class="container" style="margin-top: 15px">
-			<form action="delete_client.php" method="POST">
+		<div class="container">
+			<form action="delete_client.php" method="POST" class="pt-0 mt-0">
 				<input type='hidden' id='action' name='action' value='user_delete'>
 				<table class="table table-hover no-top-thead">
 					<thead>
 						<tr>
 							<th colspan="5">
-								<h2>Listado de clientes</h2>
+								<h1>Listado de clientes</h1>
 							</th>
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
@@ -75,10 +75,10 @@
 					<tbody>
 					<?php
 
-						$client = new Client($conn);
+						$client = new Client;
 
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
-							$client = parseClient($result);
+							$client = Client::parseClient($result);
 					?>
 							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks -->
 							<tr>
