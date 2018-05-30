@@ -79,43 +79,45 @@
 
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
 							$client = Client::parseClient($result);
+							
 					?>
+					
 							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks -->
 							<tr>
 								<td class="align-middle">
 									<input type="checkbox" name="id[]" value="<?php echo $client->getId(); ?>" onClick="stopCheckbox(this);"/>
 								</td>
-								<th scope="row" class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<th scope="row" class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getId(); ?>
 								</th>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<img class="client-img" src="<?php echo $client->getPhoto()?>" />
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getDni()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getName()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getSurname1() . ' ' . $client->getSurname2()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getAddress()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getPostalCode()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getLocation()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getProvince()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getTelephone()?>
 								</td>
-								<td class="align-middle" style="cursor: pointer;" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="clientDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getEmail()?>
 								</td>
 							</tr>

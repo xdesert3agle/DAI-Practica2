@@ -4,8 +4,6 @@
 	include('client_class.php');
     include('util.php');
 
-    $imageError = false;
-
 	if (!isLogged()) {
 		header("Location: login.php");
 	}
@@ -14,10 +12,12 @@
         $selClientID = $_GET['client_id'];
 
         $client = new Client;
-        $client = getClientWithID($selClientID);
+        $client = Client::getClientWithID($selClientID);
     }
 
-    // Editar información del cliente
+    $imageError = false;
+
+    // Insertar nuevo cliente
     if (isset($_POST['add_client'])){
         $dni = $_POST['dni'];
         $name = $_POST['name'];
@@ -29,7 +29,6 @@
         $province = $_POST['province'];
         $telephone = $_POST['telephone'];
         $email = $_POST['email'];
-        $photo = "";
 
         if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
             $uploaded_photo = $_FILES["photo"]["tmp_name"];
@@ -68,16 +67,19 @@
                     $imageError = true;
                     break;
             }
+        }
 
-            if (!$imageError) {
-                $conn->query("INSERT INTO CLIENTES VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email', '$photo')");
-                header("Location: clients.php");
+        // Si no ha habido ningún error se inserta el nuevo cliente, evaluando si se ha subido una foto o no
+        if (!$imageError) {
+            if (isset($uploaded_photo)) {
+                $insert_query = "INSERT INTO CLIENTES VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email', '$photo')";
+            } else {
+                $insert_query = "INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email')";
             }
 
-        } else {
-            $conn->query("INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email')");
+            $conn->query($insert_query);
             header("Location: clients.php");
-        }        
+        }
     }
 
 ?>
@@ -164,7 +166,7 @@
                     <div class="form-group col-sm text-center">
                         <div class="image-upload">
                             <label for="photo">
-                                <img class="client-img-big" id="avatar" name="avatar" />
+                                <img src="resources/img/no_photo.jpg" class="client-img-big no-photo clickable" id="avatar" name="avatar" />
                             </label>
                             <input type="file" name="photo" id="photo"/>
                         </div>

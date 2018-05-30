@@ -4,8 +4,6 @@
 	include('client_class.php');
     include('util.php');
 
-    $imageError = false;
-
 	if (!isLogged()) {
 		header("Location: login.php");
 	}
@@ -13,8 +11,10 @@
     if (isset($_GET['client_id'])) {
         $selClientID = $_GET['client_id'];
 
-        $client = getClientWithID($selClientID);
+        $client = Client::getClientWithID($selClientID);
     }
+
+    $imageError = false;
 
     // Editar información del cliente
     if (isset($_POST['edit_client'])){
@@ -29,8 +29,6 @@
         $province = $_POST['province'];
         $telephone = $_POST['telephone'];
         $email = $_POST['email'];
-
-        $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email'";
 
         if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
             $uploaded_photo = $_FILES["photo"]["tmp_name"];
@@ -69,15 +67,19 @@
                     $imageError = true;
                     break;
             }
-
-            // Si la imagen se ha escogido correctamente se amplía la consulta
-            if (!$imageError) {
-                $update_query .= ", fotografia = '$photo'";
-            }
         }
-        
-        $update_query .= " WHERE id_cliente = '$id'";
-        $conn->query($update_query);       
+
+        // Si no ha habido ningún error se actualizan los datos del cliente, evaluando si se ha subido una foto o no
+        if (!$imageError) {
+            if (isset($uploaded_photo)) {
+                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email', fotografia = '$photo' WHERE id_cliente = '$id'";
+            } else {
+                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email' WHERE id_cliente = '$id'";
+            }
+
+            $conn->query($update_query);
+            header("Location: clients.php");
+        }    
     }
 
 ?>
@@ -115,7 +117,7 @@
                 <div class="form-group col-sm text-center">
                     <div class="image-upload">
                         <label for="photo">
-                            <img class="client-img-big" id="avatar" name="avatar" src="<?php echo $client->getPhoto()?>" onChange="showNewAvatar();" />
+                            <img class="client-img-big clickable" id="avatar" name="avatar" src="<?php echo $client->getPhoto()?>" onChange="showNewAvatar();" />
                         </label>
                         <input type="file" name="photo" id="photo"/>
                     </div>

@@ -128,20 +128,20 @@
             
             return $client;
         }
+
+        public static function getClientWithID($id){
+            global $conn;
+    
+            $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
+            $result = $conn->query($query);
+    
+            $client = new Client;
+    
+            
+            $client = Client::parseClient($result);
+            
+            return $client;
+        }
     }
 
-    function getClientWithID($id){
-        global $conn;
-
-        $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
-        $result = $conn->query($query);
-
-        $client = new Client;
-        $client = Client::parseClient($result);
-        
-        return $client;
-    }
-
-    
-    
 ?>
