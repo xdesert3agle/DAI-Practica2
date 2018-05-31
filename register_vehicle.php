@@ -88,10 +88,10 @@
 			<a class="navbar-brand" href="index.php">Taller</a>
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
+					<li class="nav-item">
 						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
 						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
@@ -110,7 +110,7 @@
             <hr>
             
             <form method="POST" enctype="multipart/form-data">
-                <div class="row">
+            <div class="row">
                     <div class="form-group col-3 text-left">
                         <div class="image-upload">
                             <label for="photo">
@@ -174,7 +174,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <button type="submit" formaction="new_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo cliente</button>
+                        <button type="submit" formaction="new_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo coche</button>
                     </div>
                 </div>
             </form>

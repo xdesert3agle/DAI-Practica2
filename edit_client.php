@@ -5,14 +5,19 @@
     include('vehicle_class.php');
     include('util.php');
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+	controlAccess();
+    
+    if (isset($_GET['client_id'])) {
+        $selClientID = $_GET['client_id'];
+
+        $client = Client::getClientWithID($selClientID);
+    }
 
     $imageError = false;
 
-    // Insertar nuevo cliente
-    if (isset($_POST['add_client'])){
+    // Botón de editar cliente
+    if (isset($_POST['edit_client'])){
+        $id = $_POST['id'][0];
         $dni = $_POST['dni'];
         $name = $_POST['name'];
         $surname1 = $_POST['surname1'];
@@ -24,10 +29,11 @@
         $telephone = $_POST['telephone'];
         $email = $_POST['email'];
 
+        // Si el usuario ha subido una foto
         if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
             $uploaded_photo = $_FILES["photo"]["tmp_name"];
 
-            // Formatos de imagen soportados
+            // Formatos de imagen soportados: JPG, PNG.
             switch (exif_imagetype($_FILES["photo"]["tmp_name"])) {
                 case IMAGETYPE_JPEG:
                     $created_photo = imagecreatefromjpeg($uploaded_photo);
@@ -63,15 +69,15 @@
             }
         }
 
-        // Si no ha habido ningún error se inserta el nuevo cliente, evaluando si se ha subido una foto o no
+        // Si no ha habido ningún error con la foto se actualizan los datos del cliente, evaluando si se ha subido una foto o no
         if (!$imageError) {
             if (isset($uploaded_photo)) {
-                $insert_query = "INSERT INTO CLIENTES VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email', '$photo')";
+                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email', fotografia = '$photo' WHERE id_cliente = '$id'";
             } else {
-                $insert_query = "INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email')";
+                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email' WHERE id_cliente = '$id'";
             }
 
-            $conn->query($insert_query);
+            $conn->query($update_query);
             header("Location: client_list.php");
         }
     }
@@ -90,8 +96,7 @@
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
 						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
-                    </li>
-                    <li class="nav-item">
+					<li class="nav-item">
 						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
@@ -106,75 +111,82 @@
 		</nav>
 
         <div class="container" style="margin-top: 15px">
-            <h1>Nuevo cliente</h1>
+            <h1>Editar cliente</h1>
             <hr>
             
             <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id[]" value="<?php echo $client->getId(); ?>">
+                <input type="hidden" name="target" value="client">
                 <div class="row">
                     <div class="form-group col-3 text-left">
                         <div class="image-upload">
                             <label for="photo">
-                                <img class="client-img-big clickable" src="resources/img/no_photo.jpg" id="avatar" name="avatar" />
+                                <img class="client-img-big clickable" src="<?php echo $client->getPhoto()?>" id="avatar" name="avatar" />
                             </label>
                             <input type="file" name="photo" id="photo" onChange="showNewPhoto(this);"/>
                         </div>
                     </div>
-                    <div class="form-group col-9">
+                    <div class="form-group col-9 align-middle">
                         <div class="row">
                             <div class="form-group col-2">
                                 <label for="id">ID</label>
-                                <input type="text" class="form-control" name="id_disabled" value="<?php echo Client::getNewClientID(); ?>" disabled>
+                                <input type="text" class="form-control" name="id_disabled" value="<?php echo $client->getId(); ?>" disabled>
                             </div>
                             <div class="form-group col-2">
                                 <label for="dni">DNI*</label>
-                                <input type="text" class="form-control" name="dni" maxlength="9" required="required">
+                                <input type="text" class="form-control" name="dni" value="<?php echo $client->getDni(); ?>" maxlength="9" required="required">
                             </div>
                             <div class="form-group col-sm">
                                 <label for="email">E-mail*</label>
-                                <input type="text" class="form-control" name="email" maxlength="50" required="required">
+                                <input type="text" class="form-control" name="email" value="<?php echo $client->getEmail(); ?>" maxlength="50" required="required">
                             </div>
-                            <div class="form-group col-sm">
+                            <div class="form-group col-4">
                                 <label for="telephone">Teléfono*</label>
-                                <input type="text" class="form-control" name="telephone" maxlength="15" required="required">
+                                <input type="text" class="form-control" name="telephone" value="<?php echo $client->getTelephone(); ?>" maxlength="15" required="required">
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-sm">
                                 <label for="name">Nombre*</label>
-                                <input type="text" class="form-control" name="name" id="name" maxlength="30" required="required">
+                                <input type="text" class="form-control" name="name" id="name" value="<?php echo $client->getName(); ?>" maxlength="30" required="required">
                             </div>
                             <div class="form-group col-sm">
                                 <label for="surname1">Primer apellido*</label>
-                                <input type="text" class="form-control" name="surname1" id="surname1" maxlength="30" required="required">
+                                <input type="text" class="form-control" name="surname1" id="surname1" value="<?php echo $client->getSurname1(); ?>" maxlength="30" required="required">
                             </div>
                             <div class="form-group col-sm">
                                 <label for="surname2">Segundo apellido*</label>
-                                <input type="text" class="form-control" name="surname2" id="surname2" maxlength="30" required="required">
+                                <input type="text" class="form-control" name="surname2" id="surname2" value="<?php echo $client->getSurname2(); ?>" maxlength="30" required="required">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-4">
+                            <div class="form-group col-sm">
                                 <label for="address">Dirección*</label>
-                                <input type="text" class="form-control" name="address" maxlength="50" required="required">
+                                <input type="text" class="form-control" name="address" value="<?php echo $client->getAddress(); ?>" maxlength="50" required="required">
                             </div>
                             <div class="form-group col-2">
                                 <label for="postal_code">Codigo postal*</label>
-                                <input type="text" class="form-control" name="postal_code" maxlength="5" required="required">
+                                <input type="text" class="form-control" name="postal_code" value="<?php echo $client->getPostalCode(); ?>" maxlength="5" required="required">
                             </div>
                             <div class="form-group col-3">
                                 <label for="location">Población*</label>
-                                <input type="text" class="form-control" name="location" maxlength="30" required="required">
+                                <input type="text" class="form-control" name="location" value="<?php echo $client->getLocation(); ?>" maxlength="30" required="required">
                             </div>
                             <div class="form-group col-3">
                                 <label for="province">Provincia*</label>
-                                <input type="text" class="form-control" name="province" maxlength="30" required="required">
+                                <input type="text" class="form-control" name="province" value="<?php echo $client->getProvince(); ?>" maxlength="30" required="required">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <button type="submit" formaction="new_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo cliente</button>
+                        <button type="submit" class="btn btn-dark btn-block" name="edit_client">Editar datos del cliente</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-3">
+                        <button type="submit" formaction="delete_element.php?" class="btn btn-danger btn-block" name="delete_element" onClick="return confirm('¿Estás segur@ de que quieres eliminar este cliente de la base de datos?');">Eliminar cliente</button>
                     </div>
                 </div>
             </form>

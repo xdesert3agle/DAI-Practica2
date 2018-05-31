@@ -5,9 +5,7 @@
     include('vehicle_class.php');
 	include('util.php');
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+	controlAccess();
 
 	$query = 'SELECT * FROM VEHICULOS ORDER BY ID_CLIENTE';
 	$result = $conn->query($query);
@@ -25,10 +23,10 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="clients.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
 					</li>
 					<li class="nav-item active">
-						<a class="nav-link" href="vehicles.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
 			</div>
@@ -41,8 +39,9 @@
 			</div>
 		</nav>
 		<div class="container">
-			<form action="delete_client.php" method="POST" class="pt-0 mt-0">
+			<form action="delete_element.php" method="POST" class="pt-0 mt-0">
 				<input type='hidden' id='action' name='action' value='user_delete'>
+				<input type="hidden" name="target" value="vehicle">
 				<table class="table table-hover no-top-thead">
 					<thead>
 						<tr>
@@ -52,9 +51,9 @@
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
 									<input type="hidden" id="client_id" name="client_id" value="<?php echo $vehicle['id_cliente']?>" />
-									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected">Eliminar selecc.</button>
+									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar los coches seleccionados de la base de datos?');">Eliminar seleccionados</button>
 								</form>
-								<a href="new_client.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
+								<a href="register_vehicle.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
 							</th>
 						</tr>
 					</thead>
@@ -85,25 +84,25 @@
 								<td class="align-middle">
 									<input type="checkbox" name="id[]" value="<?php echo $vehicle->getId(); ?>" onClick="stopCheckbox(this);"/>
 								</td>
-								<th scope="row" class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getId(); ?>
 								</th>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getPlate() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getBrand() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getModel() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getYear() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getColor() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('vehicle_details.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
 									<?php echo $vehicle->getClientID() ?>
 								</td>
 							</tr>

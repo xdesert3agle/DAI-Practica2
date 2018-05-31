@@ -5,9 +5,7 @@
 	include('vehicle_class.php');
 	include('util.php');
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+	controlAccess();
 
 	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
 	$result = $conn->query($query);
@@ -25,10 +23,10 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
-						<a class="nav-link" href="clients.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="vehicles.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
 			</div>
@@ -41,8 +39,9 @@
 			</div>
 		</nav>
 		<div class="container-fluid">
-			<form action="delete_client.php" method="POST" class="pt-0 mt-0">
+			<form action="delete_element.php" method="POST" class="pt-0 mt-0">
 				<input type='hidden' id='action' name='action' value='user_delete'>
+				<input type="hidden" name="target" value="client">
 				<table class="table table-hover no-top-thead">
 					<thead>
 						<tr>
@@ -52,7 +51,7 @@
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
 									<input type="hidden" id="client_id" name="client_id" value="<?php echo $client['id_cliente']?>" />
-									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected">Eliminar selecc.</button>
+									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar a los clientes seleccionados de la base de datos?');">Eliminar seleccionados</button>
 								</form>
 								<a href="new_client.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
 							</th>
@@ -77,7 +76,7 @@
 					<tbody>
 					<?php
 
-						$client = new Client;
+						$client = new Client();
 
 						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
 							$client = Client::parseClient($result);
@@ -89,37 +88,37 @@
 								<td class="align-middle">
 									<input type="checkbox" name="id[]" value="<?php echo $client->getId(); ?>" onClick="stopCheckbox(this);"/>
 								</td>
-								<th scope="row" class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getId(); ?>
 								</th>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<img class="client-img" src="<?php echo $client->getPhoto()?>" />
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getDni()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getName()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getSurname1() . ' ' . $client->getSurname2()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getAddress()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getPostalCode()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getLocation()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getProvince()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getTelephone()?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('client_details.php?client_id=<?php echo $client->getId(); ?>')">
+								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getEmail()?>
 								</td>
 							</tr>

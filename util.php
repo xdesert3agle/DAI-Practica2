@@ -12,4 +12,10 @@
         return false;
     }
 
+    function controlAccess(){
+        if (!isLogged()) {
+            header("Location: login.php");
+        }
+    }
+
 ?>

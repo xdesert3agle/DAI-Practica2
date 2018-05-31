@@ -37,13 +37,16 @@
 				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="clients.php">Gestión de clientes</a>
+							<a class="nav-link" href="client_list.php">Gestión de clientes</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 						</li>
 					</ul>
 				</div>
 				<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
 					<ul class="navbar-nav ml-auto">
-						<li class="nav-item">
+						<li class="nav-item active">
 							<a class="nav-link" href="login.php">Acceso administrador</a>
 						</li>
 					</ul>

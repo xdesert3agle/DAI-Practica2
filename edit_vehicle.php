@@ -5,80 +5,27 @@
     include('vehicle_class.php');
     include('util.php');
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+	controlAccess();
     
     if (isset($_GET['vehicle_id'])) {
         $selVehicleID = $_GET['vehicle_id'];
         $vehicle = Vehicle::getVehicleWithID($selVehicleID);
     }
 
-    // Botón de editar cliente
+    // Botón de editar vehículo
     if (isset($_POST['edit_client'])){
         $id = $_POST['id'][0];
-        $dni = $_POST['dni'];
-        $name = $_POST['name'];
-        $surname1 = $_POST['surname1'];
-        $surname2 = $_POST['surname2'];
-        $address = $_POST['address'];
-        $postal_code = $_POST['postal_code'];
-        $location = $_POST['location'];
-        $province = $_POST['province'];
-        $telephone = $_POST['telephone'];
-        $email = $_POST['email'];
+        $plate = $_POST['plate'];
+        $owner = $_POST['selectOwnerList'];
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $year = $_POST['year'];
+        $color = $_POST['color'];
+        
+        $update_query = "UPDATE VEHICULOS SET MATRICULA = '$plate', MARCA ='$brand', MODELO ='$model', ANIO = '$year', COLOR ='$color', ID_CLIENTE = '$owner' WHERE ID_VEHICULO = '$id'";
 
-        // Si el usuario ha subido una foto
-        if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
-            $uploaded_photo = $_FILES["photo"]["tmp_name"];
-
-            // Formatos de imagen soportados: JPG, PNG.
-            switch (exif_imagetype($_FILES["photo"]["tmp_name"])) {
-                case IMAGETYPE_JPEG:
-                    $created_photo = imagecreatefromjpeg($uploaded_photo);
-                    
-                    ob_start();
-                    
-                    imagejpeg($created_photo);
-                    
-                    $photo = ob_get_contents();
-                    
-                    ob_end_clean();
-                    
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
-                    break;
-
-                case IMAGETYPE_PNG:
-                    $created_photo = imagecreatefrompng($uploaded_photo);
-                    
-                    ob_start();
-                    
-                    imagepng($created_photo);
-                    
-                    $photo = ob_get_contents();
-                    
-                    ob_end_clean();
-                    
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
-                    break;
-
-                default:
-                    $imageError = true;
-                    break;
-            }
-        }
-
-        // Si no ha habido ningún error con la foto se actualizan los datos del cliente, evaluando si se ha subido una foto o no
-        if (!$imageError) {
-            if (isset($uploaded_photo)) {
-                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email', fotografia = '$photo' WHERE id_cliente = '$id'";
-            } else {
-                $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email' WHERE id_cliente = '$id'";
-            }
-
-            $conn->query($update_query);
-            header("Location: clients.php");
-        }
+        $conn->query($update_query);
+        header("Location: vehicle_list.php");
     }
 
 ?>
@@ -94,9 +41,9 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="clients.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
 					<li class="nav-item active">
-						<a class="nav-link" href="vehicles.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
 			</div>
@@ -115,28 +62,29 @@
 
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="id[]" value="<?php echo $vehicle->getId(); ?>">
+                <input type="hidden" name="target" value="vehicle">
                 <div class="row">
-                    <div class="form-group col-sm">
+                    <div class="form-group col-3">
                         <label for="id">ID</label>
                         <input type="text" class="form-control" name="id_disabled" value="<?php echo $vehicle->getId(); ?>" disabled>
                     </div>
-                    <div class="form-group col-sm">
+                    <div class="form-group col-2">
                         <label for="plate">Matrícula</label>
                         <input type="text" class="form-control" name="plate" id="plate" value="<?php echo $vehicle->getPlate(); ?>" maxlength="10" required="required">
                     </div>
                     <div class="form-group col-sm">
-                        <label for="location">Propietario</label>
+                        <label for="selectOwnerList">Propietario</label>
                         <select class="form-control" name="selectOwnerList">
                         
                         <?php
                         $clientList = $conn->query("SELECT * FROM CLIENTES");
 
-                        $client = new Client;
+                        $client = new Client();
                         
                         for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                             $client = Client::parseClient($clientList);
                         ?>
-                            <option value="<?php echo $client->getId(); ?>"><?php echo "#" . $client->getID() . " - " . $client->getName() ?></option>
+                            <option value="<?php echo $client->getId(); ?>"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
                         
                         <?php
                         
@@ -167,7 +115,7 @@
                 </div>  
                 <div class="row mt-2">
                     <div class="form-group col-sm">
-                        <button type="submit" class="btn btn-danger btn-block" name="delete_client">Eliminar vehículo</button>
+                        <button type="submit" formaction="delete_element.php?" class="btn btn-danger btn-block" name="delete_vehicle" onClick="return confirm('¿Estás segur@ de que quieres eliminar este vehículo de la base de datos?');">Eliminar vehículo</button>
                     </div>
                     <div class="form-group col-sm">
                         <button type="submit" class="btn btn-dark btn-block" name="edit_client">Editar vehículo</button>

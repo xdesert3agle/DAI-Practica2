@@ -2,9 +2,7 @@
 	
 	include('util.php');
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+	controlAccess();
 
 ?>
 <html>
@@ -19,10 +17,10 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="clients.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="vehicles.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
 				</ul>
 			</div>

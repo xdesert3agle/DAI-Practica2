@@ -113,7 +113,7 @@
         public static function parseClient($result){
             $result = $result->fetch_assoc();
             
-            $client = new Client;
+            $client = new Client();
             $client->setId($result['id_cliente']);
             $client->setDni($result['dni']);
             $client->setName($result['nombre']);
@@ -137,7 +137,7 @@
             $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
             $result = $conn->query($query);
     
-            $client = new Client;
+            $client = new Client();
     
             
             $client = Client::parseClient($result);
@@ -152,6 +152,19 @@
             $result = $conn->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'CLIENTES'");
     
             return $result->fetch_assoc()['AUTO_INCREMENT'];
+        }
+
+        public static function getAvatarFromClientID($id){
+            global $conn;
+    
+            $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
+            $result = $conn->query($query);  
+            
+            return Client::parseClient($result)->getPhoto();
+        }
+
+        public static function getDefaultAvatar(){
+            return "resources/img/no_photo.jpg";
         }
     }
 
