@@ -109,6 +109,7 @@
             $this->photo = $photo;
         }
 
+        // Crea y devuelve un objeto cliente a partir del resultado de una consulta
         public static function parseClient($result){
             $result = $result->fetch_assoc();
             
@@ -129,6 +130,7 @@
             return $client;
         }
 
+        // Devuelve el cliente con una determinada ID
         public static function getClientWithID($id){
             global $conn;
     
@@ -141,6 +143,15 @@
             $client = Client::parseClient($result);
             
             return $client;
+        }
+
+        // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
+        public static function getNewClientID(){
+            global $conn;
+    
+            $result = $conn->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'CLIENTES'");
+    
+            return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
     }
 

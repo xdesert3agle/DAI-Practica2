@@ -32,7 +32,7 @@
 				if (isLogged()) {
 
 			?>
-			<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 				<a class="navbar-brand" href="index.php">Taller</a>
 				<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 					<ul class="navbar-nav mr-auto">
@@ -77,7 +77,7 @@
 						<label for="password">Password</label>
 						<input type="password" class="form-control" id="password" name="password" placeholder="Contraseña">
 					</div>
-					<button type="submit" class="btn btn-primary">Identificarse</button>
+					<button type="submit" class="btn btn-dark">Identificarse</button>
 				</form>
 			<?php
 

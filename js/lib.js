@@ -2,20 +2,18 @@ function stopCheckbox(e){
     event.stopPropagation();
 }
 
-function clientDetails(path){
+function listElementDetails(path){
     window.location.href = path;
 }
 
-function init(){
-    var avatar = document.getElementById('avatar');
-
-    avatar.addEventListener("change", function(event) {
-        if (event.attrName == "src") {
-            var newAvatar = this.files[0];
-
-    var url = window.URL.createObjectURL(newAvatar);
-
-    avatar.src = url;
+function showNewPhoto(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            document.getElementById("avatar").src = e.target.result;
         }
-    });
+  
+        reader.readAsDataURL(input.files[0]);
+    }
 }
