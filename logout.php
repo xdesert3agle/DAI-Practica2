@@ -1,5 +1,5 @@
 <?php
-    include('util.php');
+    include "util/util.php";
 
     if (isLogged()) {
         session_destroy();

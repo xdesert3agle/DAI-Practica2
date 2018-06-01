@@ -1,21 +1,22 @@
 <?php
 	
-	include('dbconnection.php');
-	include('client_class.php');
-	include('vehicle_class.php');
-	include('util.php');
+	include "classes/database.php";
+	include "classes/client_class.php";
+	include "classes/vehicle_class.php";
+	include "util/util.php";
 
 	controlAccess();
 
-	$query = 'SELECT * FROM CLIENTES ORDER BY ID_CLIENTE';
-	$result = $conn->query($query);
+	$db = Database::getInstance();
+
+	$client_list = $db->conn()->query("SELECT * FROM CLIENTES ORDER BY ID_CLIENTE");
 
 ?>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -53,7 +54,7 @@
 									<input type="hidden" id="client_id" name="client_id" value="<?php echo $client['id_cliente']?>" />
 									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar a los clientes seleccionados de la base de datos?');">Eliminar seleccionados</button>
 								</form>
-								<a href="new_client.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
+								<a href="register_client.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
 							</th>
 						</tr>
 					</thead>
@@ -78,8 +79,8 @@
 
 						$client = new Client();
 
-						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
-							$client = Client::parseClient($result);
+						for ($i = 0; $i < mysqli_num_rows($client_list); $i++) {
+							$client = Client::parseClient($client_list);
 							
 					?>
 					

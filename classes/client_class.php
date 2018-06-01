@@ -1,4 +1,5 @@
 <?php
+
     class Client {
         private $id;
         private $dni;
@@ -109,8 +110,8 @@
             $this->photo = $photo;
         }
 
-        // Crea y devuelve un objeto cliente a partir del resultado de una consulta
-        public static function parseClient($result){
+        // Crea y devuelve un objeto Cliente a partir del resultado de una consulta
+        public function parseClient($result){
             $result = $result->fetch_assoc();
             
             $client = new Client();
@@ -128,43 +129,6 @@
             $client->setPhoto("data:image/png;base64," . base64_encode($result['fotografia']));
             
             return $client;
-        }
-
-        // Devuelve el cliente con una determinada ID
-        public static function getClientWithID($id){
-            global $conn;
-    
-            $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
-            $result = $conn->query($query);
-    
-            $client = new Client();
-    
-            
-            $client = Client::parseClient($result);
-            
-            return $client;
-        }
-
-        // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
-        public static function getNewClientID(){
-            global $conn;
-    
-            $result = $conn->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'CLIENTES'");
-    
-            return $result->fetch_assoc()['AUTO_INCREMENT'];
-        }
-
-        public static function getAvatarFromClientID($id){
-            global $conn;
-    
-            $query = "SELECT * FROM CLIENTES WHERE ID_CLIENTE = " .$id;
-            $result = $conn->query($query);  
-            
-            return Client::parseClient($result)->getPhoto();
-        }
-
-        public static function getDefaultAvatar(){
-            return "resources/img/no_photo.jpg";
         }
     }
 

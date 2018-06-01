@@ -1,21 +1,21 @@
 <?php
 	
-	include('dbconnection.php');
-    include('client_class.php');
-    include('vehicle_class.php');
-	include('util.php');
+	include "classes/database.php";
+    include "classes/client_class.php";
+    include "classes/vehicle_class.php";
+	include "util/util.php";
 
 	controlAccess();
-
-	$query = 'SELECT * FROM VEHICULOS ORDER BY ID_CLIENTE';
-	$result = $conn->query($query);
+	
+	$db = Database::getInstance();
+	$vehicle_list = $db->conn()->query("SELECT * FROM VEHICULOS ORDER BY ID_VEHICULO");
 
 ?>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -74,8 +74,8 @@
 
 						$vehicle = new Vehicle;
 
-						for ($i = 0; $i < mysqli_num_rows($result); $i++) {
-							$vehicle = Vehicle::parseVehicle($result);
+						for ($i = 0; $i < mysqli_num_rows($vehicle_list); $i++) {
+							$vehicle = Vehicle::parseVehicle($vehicle_list);
 							
 					?>
 					

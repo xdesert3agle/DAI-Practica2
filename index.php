@@ -1,15 +1,15 @@
 <?php
 	
-	include('util.php');
+	include "util/util.php";
 
 	controlAccess();
 
 ?>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">

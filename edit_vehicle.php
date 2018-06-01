@@ -1,15 +1,17 @@
 <?php
 	
-	include('dbconnection.php');
-    include('client_class.php');
-    include('vehicle_class.php');
-    include('util.php');
+	include "classes/database.php";
+    include "classes/client_class.php";
+    include "classes/vehicle_class.php";
+    include "util/util.php";
 
-	controlAccess();
+    controlAccess();
+    
+    $db = Database::getInstance();
     
     if (isset($_GET['vehicle_id'])) {
         $selVehicleID = $_GET['vehicle_id'];
-        $vehicle = Vehicle::getVehicleWithID($selVehicleID);
+        $vehicle = $db->getVehicleWithID($selVehicleID);
     }
 
     // Botón de editar vehículo
@@ -21,19 +23,17 @@
         $model = $_POST['model'];
         $year = $_POST['year'];
         $color = $_POST['color'];
-        
-        $update_query = "UPDATE VEHICULOS SET MATRICULA = '$plate', MARCA ='$brand', MODELO ='$model', ANIO = '$year', COLOR ='$color', ID_CLIENTE = '$owner' WHERE ID_VEHICULO = '$id'";
 
-        $conn->query($update_query);
+        $db->conn()->query("UPDATE VEHICULOS SET MATRICULA = '$plate', MARCA ='$brand', MODELO ='$model', ANIO = '$year', COLOR ='$color', ID_CLIENTE = '$owner' WHERE ID_VEHICULO = '$id'");
         header("Location: vehicle_list.php");
     }
 
 ?>
 <html>
     <head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -42,6 +42,7 @@
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
 						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
+                    </li>
 					<li class="nav-item active">
 						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>
@@ -76,21 +77,31 @@
                         <label for="selectOwnerList">Propietario</label>
                         <select class="form-control" name="selectOwnerList">
                         
-                        <?php
-                        $clientList = $conn->query("SELECT * FROM CLIENTES");
+                    <?php
+                        
+                        $clientList = $db->conn()->query("SELECT * FROM CLIENTES");
 
                         $client = new Client();
                         
                         for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                             $client = Client::parseClient($clientList);
-                        ?>
+
+                            if ($client->getId() != $vehicle->getClientID()) {
+
+                    ?>
                             <option value="<?php echo $client->getId(); ?>"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
-                        
-                        <?php
-                        
+                    <?php
+
+                            } else {
+
+                    ?>
+                            <option value="<?php echo $client->getId(); ?>" selected="selected"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
+                    <?php
+                            
+                            }
                         }
 
-                        ?>
+                    ?>
                         </select>
                     </div>
                 </div>

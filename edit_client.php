@@ -1,18 +1,19 @@
 <?php
 	
-	include('dbconnection.php');
-    include('client_class.php');
-    include('vehicle_class.php');
-    include('util.php');
+	include "classes/database.php";
+    include "classes/client_class.php";
+    include "classes/vehicle_class.php";
+    include "util/util.php";
 
-	controlAccess();
+    controlAccess();
+    
+    $db = Database::getInstance();
     
     if (isset($_GET['client_id'])) {
         $selClientID = $_GET['client_id'];
-
-        $client = Client::getClientWithID($selClientID);
+        $client = $db->getClientWithID($selClientID);
     }
-
+    
     $imageError = false;
 
     // Botón de editar cliente
@@ -46,7 +47,7 @@
                     
                     ob_end_clean();
                     
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    $photo = str_replace('##', '\##', $db->real_escape_string($photo));
                     break;
 
                 case IMAGETYPE_PNG:
@@ -60,7 +61,7 @@
                     
                     ob_end_clean();
                     
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    $photo = str_replace('##', '\##', $db->real_escape_string($photo));
                     break;
 
                 default:
@@ -77,7 +78,7 @@
                 $update_query = "UPDATE CLIENTES SET dni = '$dni', nombre ='$name', apellido1 ='$surname1', apellido2 = '$surname2', direccion ='$address', cp = '$postal_code', poblacion ='$location', provincia = '$province', telefono = '$telephone', email = '$email' WHERE id_cliente = '$id'";
             }
 
-            $conn->query($update_query);
+            $db->conn()->query($update_query);
             header("Location: client_list.php");
         }
     }
@@ -85,9 +86,9 @@
 ?>
 <html>
     <head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -96,6 +97,7 @@
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
 						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
+                    </li>
 					<li class="nav-item">
 						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
 					</li>

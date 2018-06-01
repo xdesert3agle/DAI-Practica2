@@ -64,8 +64,8 @@
             $this->clientID = $clientID;
         }
 
-        // Crea y devuelve un objeto vehículo a partir del resultado de una consulta
-        public static function parseVehicle($result){
+        // Crea y devuelve un objeto Vehículo a partir del resultado de una consulta
+        public function parseVehicle($result){
             $result = $result->fetch_assoc();
             
             $vehicle = new Vehicle;
@@ -78,25 +78,6 @@
             $vehicle->setClientID($result['id_cliente']);
             
             return $vehicle;
-        }
-        
-        // Devuelve el vehículo con una determinada ID
-        public static function getVehicleWithID($id){
-            global $conn;
-    
-            $query = "SELECT * FROM VEHICULOS WHERE ID_VEHICULO = " .$id;
-            $result = $conn->query($query);
-            
-            return Vehicle::parseVehicle($result);
-        }
-
-        // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
-        public static function getNewClientID(){
-            global $conn;
-    
-            $result = $conn->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'CLIENTES'");
-    
-            return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
     }
 

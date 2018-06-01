@@ -1,10 +1,11 @@
 <?php
     
-    include('dbconnection.php');
-    include('util.php');
+    include "classes/database.php";
+    include "util/util.php";
 
     controlAccess();
 
+    $db = Database::getInstance();
     $elementList = $_POST["id"];
     $target = $_POST["target"];
     $deleteQuery = "";
@@ -22,7 +23,7 @@
     }
 
     for ($i = 0; $i < count($elementList); $i++) {
-        $conn->query($deleteQuery . $elementList[$i]);
+        $db->conn()->query($deleteQuery . $elementList[$i]);
     }
 
     header("Location: $redirectDest");

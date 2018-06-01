@@ -1,87 +1,34 @@
 <?php
 	
-	include('dbconnection.php');
-    include('client_class.php');
-    include('vehicle_class.php');
-    include('util.php');
+	include "classes/database.php";
+    include "classes/client_class.php";
+    include "classes/vehicle_class.php";
+    include "util/util.php";
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
-
+    controlAccess();
+    
+    $db = Database::getInstance();
     $imageError = false;
 
     // Insertar nuevo cliente
-    if (isset($_POST['add_client'])){
-        $dni = $_POST['dni'];
-        $name = $_POST['name'];
-        $surname1 = $_POST['surname1'];
-        $surname2 = $_POST['surname2'];
-        $address = $_POST['address'];
-        $postal_code = $_POST['postal_code'];
-        $location = $_POST['location'];
-        $province = $_POST['province'];
-        $telephone = $_POST['telephone'];
-        $email = $_POST['email'];
+    if (isset($_POST['add_vehicle'])){
+        $plate = $_POST['plate'];
+        $owner = $_POST['selectOwnerList'];
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $year = $_POST['year'];
+        $color = $_POST['color'];
 
-        if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
-            $uploaded_photo = $_FILES["photo"]["tmp_name"];
-
-            // Formatos de imagen soportados
-            switch (exif_imagetype($_FILES["photo"]["tmp_name"])) {
-                case IMAGETYPE_JPEG:
-                    $created_photo = imagecreatefromjpeg($uploaded_photo);
-                    
-                    ob_start();
-                    
-                    imagejpeg($created_photo);
-                    
-                    $photo = ob_get_contents();
-                    
-                    ob_end_clean();
-                    
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
-                    break;
-
-                case IMAGETYPE_PNG:
-                    $created_photo = imagecreatefrompng($uploaded_photo);
-                    
-                    ob_start();
-                    
-                    imagepng($created_photo);
-                    
-                    $photo = ob_get_contents();
-                    
-                    ob_end_clean();
-                    
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
-                    break;
-
-                default:
-                    $imageError = true;
-                    break;
-            }
-        }
-
-        // Si no ha habido ningún error se inserta el nuevo cliente, evaluando si se ha subido una foto o no
-        if (!$imageError) {
-            if (isset($uploaded_photo)) {
-                $insert_query = "INSERT INTO CLIENTES VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email', '$photo')";
-            } else {
-                $insert_query = "INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email')";
-            }
-
-            $conn->query($insert_query);
-            header("Location: client_list.php");
-        }
+        $result = $db->conn()->query("INSERT INTO VEHICULOS (MATRICULA, MARCA, MODELO, ANIO, COLOR, ID_CLIENTE) VALUES ('$plate', '$brand', '$model', '$year', '$color', '$owner')");
+        header("Location: vehicle_list.php");
     }
 
 ?>
 <html>
     <head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -106,75 +53,62 @@
 		</nav>
 
         <div class="container" style="margin-top: 15px">
-            <h1>Nuevo cliente</h1>
+            <h1>Registrar un vehículo nuevo</h1>
             <hr>
             
             <form method="POST" enctype="multipart/form-data">
-            <div class="row">
-                    <div class="form-group col-3 text-left">
-                        <div class="image-upload">
-                            <label for="photo">
-                                <img class="client-img-big clickable" src="resources/img/no_photo.jpg" id="avatar" name="avatar" />
-                            </label>
-                            <input type="file" name="photo" id="photo" onChange="showNewPhoto(this);"/>
-                        </div>
+                <div class="row">
+                    <div class="form-group col-3">
+                        <label for="id">ID</label>
+                        <input type="text" class="form-control" name="id_disabled" value="<?php echo Vehicle::getNewVehicleID(); ?>" disabled>
                     </div>
-                    <div class="form-group col-9">
-                        <div class="row">
-                            <div class="form-group col-2">
-                                <label for="id">ID</label>
-                                <input type="text" class="form-control" name="id_disabled" value="<?php echo Client::getNewClientID(); ?>" disabled>
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="dni">DNI*</label>
-                                <input type="text" class="form-control" name="dni" maxlength="9" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="email">E-mail*</label>
-                                <input type="text" class="form-control" name="email" maxlength="50" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="telephone">Teléfono*</label>
-                                <input type="text" class="form-control" name="telephone" maxlength="15" required="required">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-sm">
-                                <label for="name">Nombre*</label>
-                                <input type="text" class="form-control" name="name" id="name" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="surname1">Primer apellido*</label>
-                                <input type="text" class="form-control" name="surname1" id="surname1" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="surname2">Segundo apellido*</label>
-                                <input type="text" class="form-control" name="surname2" id="surname2" maxlength="30" required="required">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-4">
-                                <label for="address">Dirección*</label>
-                                <input type="text" class="form-control" name="address" maxlength="50" required="required">
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="postal_code">Codigo postal*</label>
-                                <input type="text" class="form-control" name="postal_code" maxlength="5" required="required">
-                            </div>
-                            <div class="form-group col-3">
-                                <label for="location">Población*</label>
-                                <input type="text" class="form-control" name="location" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-3">
-                                <label for="province">Provincia*</label>
-                                <input type="text" class="form-control" name="province" maxlength="30" required="required">
-                            </div>
-                        </div>
+                    <div class="form-group col-2">
+                        <label for="plate">Matrícula</label>
+                        <input type="text" class="form-control" name="plate" id="plate" maxlength="10" required="required">
+                    </div>
+                    <div class="form-group col-sm">
+                        <label for="selectOwnerList">Propietario</label>
+                        <select class="form-control" name="selectOwnerList">
+                        
+                        <?php
+                        $clientList = $db->conn()->query("SELECT * FROM CLIENTES");
+
+                        $client = new Client();
+                        
+                        for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
+                            $client = Client::parseClient($clientList);
+                        ?>
+                            <option value="<?php echo $client->getId(); ?>"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
+                        
+                        <?php
+                        
+                        }
+
+                        ?>
+                        </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <button type="submit" formaction="new_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo coche</button>
+                        <label for="name">Marca</label>
+                        <input type="text" class="form-control" name="brand" id="brand" maxlength="20" required="required">
+                    </div>
+                    <div class="form-group col-sm">
+                        <label for="surname1">Modelo</label>
+                        <input type="text" class="form-control" name="model" id="model" maxlength="50" required="required">
+                    </div>
+                    <div class="form-group col-1">
+                        <label for="surname2">Año</label>
+                        <input type="text" class="form-control" name="year" id="year" maxlength="4" required="required">
+                    </div>
+                    <div class="form-group col-2">
+                        <label for="address">Color</label>
+                        <input type="text" class="form-control" name="color" id="color" maxlength="10" required="required">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col-sm">
+                        <button type="submit" class="btn btn-dark btn-block" name="add_vehicle">Registrar vehículo</button>
                     </div>
                 </div>
             </form>

@@ -1,13 +1,13 @@
 <?php
 	
-	include('dbconnection.php');
-    include('client_class.php');
-    include('vehicle_class.php');
-    include('util.php');
+	include "classes/database.php";
+    include "classes/client_class.php";
+    include "classes/vehicle_class.php";
+    include "util/util.php";
 
-	if (!isLogged()) {
-		header("Location: login.php");
-	}
+    controlAccess();
+    
+    $db = Database::getInstance();
 
     $imageError = false;
 
@@ -40,7 +40,7 @@
                     
                     ob_end_clean();
                     
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    $photo = str_replace('##', '\##', $db->real_escape_string($photo));
                     break;
 
                 case IMAGETYPE_PNG:
@@ -54,7 +54,7 @@
                     
                     ob_end_clean();
                     
-                    $photo = str_replace('##', '\##', $conn->real_escape_string($photo));
+                    $photo = str_replace('##', '\##', $db->real_escape_string($photo));
                     break;
 
                 default:
@@ -71,7 +71,7 @@
                 $insert_query = "INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email')";
             }
 
-            $conn->query($insert_query);
+            $db->conn()->query($insert_query);
             header("Location: client_list.php");
         }
     }
@@ -79,9 +79,9 @@
 ?>
 <html>
     <head>
-		<link rel="stylesheet" type="text/css" href="./style/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="./style/custom.css" />
-        <script src="./js/lib.js"></script>
+		<link rel="stylesheet" type="text/css" href="./resources/style/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/style/custom.css" />
+        <script src="./resources/js/lib.js"></script>
 	</head>
     <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -123,7 +123,7 @@
                         <div class="row">
                             <div class="form-group col-2">
                                 <label for="id">ID</label>
-                                <input type="text" class="form-control" name="id_disabled" value="<?php echo Client::getNewClientID(); ?>" disabled>
+                                <input type="text" class="form-control" name="id_disabled" value="<?php echo $db->getNewClientID(); ?>" disabled>
                             </div>
                             <div class="form-group col-2">
                                 <label for="dni">DNI*</label>
@@ -174,7 +174,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <button type="submit" formaction="new_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo cliente</button>
+                        <button type="submit" formaction="register_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo cliente</button>
                     </div>
                 </div>
             </form>
