@@ -111,7 +111,7 @@
         }
 
         // Crea y devuelve un objeto Cliente a partir del resultado de una consulta
-        public function parseClient($result){
+        public static function parseClient($result){
             $result = $result->fetch_assoc();
             
             $client = new Client();
@@ -126,7 +126,7 @@
             $client->setProvince($result['provincia']);
             $client->setTelephone($result['telefono']);
             $client->setEmail($result['email']);
-            $client->setPhoto("data:image/png;base64," . base64_encode($result['fotografia']));
+            $client->setPhoto($result['fotografia'] ? "data:image/png;base64," . base64_encode($result['fotografia']) : "resources/img/no_photo_client.jpg");
             
             return $client;
         }

@@ -10,19 +10,15 @@
 
     $imageError = false;
 
-    // Insertar nuevo cliente
-    if (isset($_POST['add_client'])){
-        $dni = $_POST['dni'];
-        $name = $_POST['name'];
-        $surname1 = $_POST['surname1'];
-        $surname2 = $_POST['surname2'];
-        $address = $_POST['address'];
-        $postal_code = $_POST['postal_code'];
-        $location = $_POST['location'];
-        $province = $_POST['province'];
-        $telephone = $_POST['telephone'];
-        $email = $_POST['email'];
+    // Insertar nuevo repuesto
+    if (isset($_POST['add_replacement'])){
+        $reference = $_POST['reference'];
+        $description = $_POST['description'];
+        $price = $_POST['price'];
+        $percent = $_POST['percent'];
+        $photo = "";
 
+        // Si el usuario ha subido una foto
         if (is_uploaded_file($_FILES["photo"]["tmp_name"])) {
             $uploaded_photo = $_FILES["photo"]["tmp_name"];
 
@@ -62,12 +58,12 @@
             }
         }
 
-        // Si no ha habido ningún error se inserta el nuevo cliente, evaluando si se ha subido una foto o no
+        // Si no ha habido ningún error con la foto se insertar el nuevo repuesto, evaluando si se ha subido una foto o no
         if (!$imageError) {
-            $insert_query = "INSERT INTO CLIENTES (dni, nombre, apellido1, apellido2, direccion, cp, poblacion, provincia, telefono, email, fotografia) VALUES ('$dni', '$name', '$surname1', '$surname2', '$address', '$postal_code', '$location', '$province', '$telephone', '$email', '$photo')";
+            $insert_query = "INSERT INTO REPUESTOS (REFERENCIA, DESCRIPCION, IMPORTE, PORCENTAJE, FOTOGRAFIA) VALUES ('$reference', '$description', '$price', '$percent', '$photo')";
 
             $db->conn()->query($insert_query);
-            header("Location: client_list.php");
+            //header("Location: replacement_list.php");
         }
     }
 
@@ -83,13 +79,13 @@
 			<a class="navbar-brand" href="index.php">Taller</a>
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
+					<li class="nav-item">
 						<a class="nav-link" href="client_list.php">Clientes</a>
                     </li>
                     <li class="nav-item">
 						<a class="nav-link" href="vehicle_list.php">Vehículos</a>
 					</li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
 						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
 				</ul>
@@ -104,75 +100,60 @@
 		</nav>
 
         <div class="container" style="margin-top: 15px">
-            <h1>Nuevo cliente</h1>
+            <h1>Registrar una nueva pieza de repuesto</h1>
             <hr>
             
             <form method="POST" enctype="multipart/form-data">
-                <div class="row">
+            <div class="row">
                     <div class="form-group col-3 text-left">
                         <div class="image-upload">
                             <label for="photo">
-                                <img class="client-img-big clickable" src="resources/img/no_photo_client.jpg" id="avatar" name="avatar" />
+                                <img class="client-img-big clickable" src="resources/img/no_photo_product.jpg" id="avatar" name="avatar" />
                             </label>
                             <input type="file" name="photo" id="photo" onChange="showNewPhoto(this);"/>
                         </div>
                     </div>
-                    <div class="form-group col-9">
+                    <div class="form-group col-9 align-middle">
                         <div class="row">
                             <div class="form-group col-2">
-                                <label for="id">ID</label>
-                                <input type="text" class="form-control" name="id_disabled" value="<?php echo $db->getNewClientID(); ?>" disabled>
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="dni">DNI*</label>
-                                <input type="text" class="form-control" name="dni" maxlength="9" required="required">
+                                <label for="id_disabled">ID</label>
+                                <input type="text" class="form-control" name="id_disabled" id="id_disabled" value="<?php echo $db->getNewReplacementID(); ?>" disabled>
                             </div>
                             <div class="form-group col-sm">
-                                <label for="email">E-mail*</label>
-                                <input type="text" class="form-control" name="email" maxlength="50" required="required">
+                                <label for="reference">Referencia*</label>
+                                <input type="text" class="form-control" name="reference" id="reference" maxlength="10" required="required">
                             </div>
                             <div class="form-group col-sm">
-                                <label for="telephone">Teléfono*</label>
-                                <input type="text" class="form-control" name="telephone" maxlength="15" required="required">
+                                <label for="price">Importe*</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="price" id="price" maxlength="11" required="required">
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">€</div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="form-group col-sm">
+                                <label for="percent">Porcentaje*</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="percent" id="percent" min="0" max="100" required="required">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2">%</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-sm">
-                                <label for="name">Nombre*</label>
-                                <input type="text" class="form-control" name="name" id="name" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="surname1">Primer apellido*</label>
-                                <input type="text" class="form-control" name="surname1" id="surname1" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-sm">
-                                <label for="surname2">Segundo apellido*</label>
-                                <input type="text" class="form-control" name="surname2" id="surname2" maxlength="30" required="required">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-4">
-                                <label for="address">Dirección*</label>
-                                <input type="text" class="form-control" name="address" maxlength="50" required="required">
-                            </div>
-                            <div class="form-group col-2">
-                                <label for="postal_code">Codigo postal*</label>
-                                <input type="text" class="form-control" name="postal_code" maxlength="5" required="required">
-                            </div>
-                            <div class="form-group col-3">
-                                <label for="location">Población*</label>
-                                <input type="text" class="form-control" name="location" maxlength="30" required="required">
-                            </div>
-                            <div class="form-group col-3">
-                                <label for="province">Provincia*</label>
-                                <input type="text" class="form-control" name="province" maxlength="30" required="required">
+                                <label for="description">Descripción*</label>
+                                <input type="text" class="form-control" name="description" id="description" maxlength="50" required="required">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <button type="submit" formaction="register_client.php?" class="btn btn-dark btn-block" name="add_client">Registrar nuevo cliente</button>
+                        <button type="submit" class="btn btn-dark btn-block" name="add_replacement">Registrar nueva pieza</button>
                     </div>
                 </div>
             </form>

@@ -1,5 +1,5 @@
 <?php
-    
+
     class Database {
         private static $instance = null;
         private $conn;
@@ -7,6 +7,8 @@
         private $host = "localhost";
         private $user = "root";
         private $pwd = "";
+        
+        const EMPTY_IMG = "";
   
         private function __construct() {
             $this->conn = new mysqli($this->host, $this->user, $this->pwd, $this->db);
@@ -67,7 +69,7 @@
 
         // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
         public function getNewReplacementID(){   
-            $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'VEHICULOS'");
+            $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'REPUESTOS'");
     
             return $result->fetch_assoc()['AUTO_INCREMENT'];
         }

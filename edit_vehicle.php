@@ -41,10 +41,13 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Clientes</a>
                     </li>
 					<li class="nav-item active">
-						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Vehículos</a>
+					</li>
+                    <li class="nav-item">
+						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
 				</ul>
 			</div>
@@ -80,8 +83,6 @@
                     <?php
                         
                         $clientList = $db->conn()->query("SELECT * FROM CLIENTES");
-
-                        $client = new Client();
                         
                         for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                             $client = Client::parseClient($clientList);

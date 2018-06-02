@@ -1,11 +1,20 @@
 <?php
 
     class Replacement {
+        private $id;
         private $ref;
         private $description;
         private $price;
         private $percent;
         private $photo;
+
+        public function getId(){
+            return $this->id;
+        }
+    
+        public function setId($id){
+            $this->id = $id;
+        }
 
         public function getRef(){
             return $this->ref;
@@ -52,13 +61,14 @@
             $result = $result->fetch_assoc();
             
             $replacement = new Replacement;
-            $replacement->setRef($result['id_vehiculo']);
-            $replacement->setDescription($result['id_vehiculo']);
-            $replacement->setPrice($result['matricula']);
+            $replacement->setId($result['id_repuesto']);
+            $replacement->setRef($result['referencia']);
+            $replacement->setDescription($result['descripcion']);
+            $replacement->setPrice($result['importe']);
             $replacement->setPercent($result['porcentaje']);
-            $replacement->setPhoto($result['fotografia']);
+            $replacement->setPhoto($result['fotografia'] ? "data:image/jpg;base64," . base64_encode($result['fotografia']) : "resources/img/no_photo_product.jpg");
             
-            return $result;
+            return $replacement;
         }
     }
 

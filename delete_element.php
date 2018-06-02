@@ -20,6 +20,11 @@
             $deleteQuery = "DELETE FROM VEHICULOS WHERE ID_VEHICULO = ";
             $redirectDest = "vehicle_list.php";
             break;
+
+        case "replacement":
+            $deleteQuery = "DELETE FROM REPUESTOS WHERE ID_REPUESTO = ";
+            $redirectDest = "replacement_list.php";
+            break;
     }
 
     for ($i = 0; $i < count($elementList); $i++) {

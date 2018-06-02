@@ -2,7 +2,6 @@
 	
 	include "classes/database.php";
 	include "classes/client_class.php";
-	include "classes/vehicle_class.php";
 	include "util/util.php";
 
 	controlAccess();
@@ -24,10 +23,13 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
-						<a class="nav-link" href="client_list.php">Gestión de clientes</a>
+						<a class="nav-link" href="client_list.php">Clientes</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="vehicle_list.php">Gestión de vehículos</a>
+						<a class="nav-link" href="vehicle_list.php">Vehículos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
 				</ul>
 			</div>
@@ -77,7 +79,6 @@
 					<tbody>
 					<?php
 
-						$client = new Client();
 
 						for ($i = 0; $i < mysqli_num_rows($client_list); $i++) {
 							$client = Client::parseClient($client_list);
@@ -93,7 +94,8 @@
 									<?php echo $client->getId(); ?>
 								</th>
 								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-									<img class="client-img" src="<?php echo $client->getPhoto()?>" />
+									<img class="client-img" src="<?php echo $client->getPhoto() ?>" />
+
 								</td>
 								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getDni()?>
