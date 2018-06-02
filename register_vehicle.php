@@ -3,7 +3,7 @@
 	include "classes/database.php";
     include "classes/client_class.php";
     include "classes/vehicle_class.php";
-    include "util/util.php";
+
 
     controlAccess();
     
@@ -62,8 +62,8 @@
             <form method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div class="form-group col-3">
-                        <label for="id">ID</label>
-                        <input type="text" class="form-control" name="id_disabled" value="<?php echo $db->getNewVehicleID(); ?>" disabled>
+                        <label for="id_disabled">ID</label>
+                        <input type="text" class="form-control" id="id_disabled" name="id_disabled" value="<?php echo $db->getNewVehicleID(); ?>" disabled>
                     </div>
                     <div class="form-group col-2">
                         <label for="plate">Matrícula</label>
@@ -71,7 +71,7 @@
                     </div>
                     <div class="form-group col-sm">
                         <label for="selectOwnerList">Propietario</label>
-                        <select class="form-control" name="selectOwnerList">
+                        <select class="form-control" name="selectOwnerList" id="selectOwnerList">
                         
                         <?php
                         $clientList = $db->conn()->query("SELECT * FROM CLIENTES");
@@ -91,19 +91,19 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-3">
-                        <label for="name">Marca</label>
+                        <label for="brand">Marca</label>
                         <input type="text" class="form-control" name="brand" id="brand" maxlength="20" required="required">
                     </div>
                     <div class="form-group col-sm">
-                        <label for="surname1">Modelo</label>
+                        <label for="model">Modelo</label>
                         <input type="text" class="form-control" name="model" id="model" maxlength="50" required="required">
                     </div>
                     <div class="form-group col-1">
-                        <label for="surname2">Año</label>
+                        <label for="year">Año</label>
                         <input type="text" class="form-control" name="year" id="year" maxlength="4" required="required">
                     </div>
                     <div class="form-group col-2">
-                        <label for="address">Color</label>
+                        <label for="color">Color</label>
                         <input type="text" class="form-control" name="color" id="color" maxlength="10" required="required">
                     </div>
                 </div>
@@ -113,20 +113,6 @@
                     </div>
                 </div>
             </form>
-            <?php
-
-                if ($imageError) {
-                    
-            ?>
-            <div class="alert alert-danger" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">
-                <h4 class="mb-0">Error al editar la información del cliente.</h4>
-                <p class="mb-0">Formato de imagen no soportado.</p>
-            </div>
-            <?php
-            
-                }
-
-            ?>
         </div>
     </body>
 </html>

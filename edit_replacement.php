@@ -179,7 +179,7 @@
                     
             ?>
             <div class="alert alert-danger" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">
-                <h4 class="mb-0">Error al editar la información del cliente.</h4>
+                <h4 class="mb-0">Error al editar la información de la pieza.</h4>
                 <p class="mb-0">Formato de imagen no soportado.</p>
             </div>
             <?php
