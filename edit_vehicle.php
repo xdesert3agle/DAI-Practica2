@@ -49,6 +49,9 @@
                     <li class="nav-item">
 						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bill_list.php">Facturas</a>
+                    </li>
 				</ul>
 			</div>
 			<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -77,33 +80,7 @@
                         <input type="text" class="form-control" name="plate" id="plate" value="<?php echo $vehicle->getPlate(); ?>" maxlength="10" required="required">
                     </div>
                     <div class="form-group col-sm">
-                        <label for="selectOwnerList">Propietario</label>
-                        <select class="form-control" name="selectOwnerList">
-                        
-                    <?php
-                        
-                        $clientList = $db->conn()->query("SELECT * FROM CLIENTES");
-                        
-                        for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
-                            $client = Client::parseClient($clientList);
-
-                            if ($client->getId() != $vehicle->getClientID()) {
-
-                    ?>
-                            <option value="<?php echo $client->getId(); ?>"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
-                    <?php
-
-                            } else {
-
-                    ?>
-                            <option value="<?php echo $client->getId(); ?>" selected="selected"><?php echo "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() ?></option>
-                    <?php
-                            
-                            }
-                        }
-
-                    ?>
-                        </select>
+                        <?php echo $db->getClientList() ?>
                     </div>
                 </div>
                 <div class="row">

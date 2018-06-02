@@ -30,6 +30,9 @@
 					<li class="nav-item active">
 						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bill_list.php">Facturas</a>
+                    </li>
 				</ul>
 			</div>
 			<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">

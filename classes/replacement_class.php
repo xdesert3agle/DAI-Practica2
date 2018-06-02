@@ -57,7 +57,7 @@
         }
 
         // Crea y devuelve un objeto Repuesto a partir del resultado de una consulta
-        public function parseReplacement($result){
+        public static function parseReplacement($result){
             $result = $result->fetch_assoc();
             
             $replacement = new Replacement;
@@ -71,5 +71,3 @@
             return $replacement;
         }
     }
-
-?>
