@@ -60,7 +60,7 @@
 							</th>
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
-									<input type="hidden" id="client_id" name="client_id" value="<?php echo $vehicle['id_cliente']?>" />
+									<input type="hidden" id="client_id" name="client_id" value="<?php echo $bill['id_cliente']?>" />
 									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar los coches seleccionados de la base de datos?');">Eliminar seleccionados</button>
 								</form>
 								<a href="register_vehicle.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
@@ -82,38 +82,38 @@
 					<tbody>
 					<?php
 
-						$vehicle = new Vehicle;
+						$bill = new Vehicle;
 
 						for ($i = 0; $i < mysqli_num_rows($vehicle_list); $i++) {
-							$vehicle = Vehicle::parseVehicle($vehicle_list);
+							$bill = Vehicle::parseVehicle($vehicle_list);
 							
 					?>
 					
 							<!-- El onClick va en todas las columnas menos en la de la checkbox para evitar missclicks -->
 							<tr>
 								<td class="align-middle">
-									<input type="checkbox" name="id[]" value="<?php echo $vehicle->getId(); ?>" onClick="stopCheckbox(this);"/>
+									<input type="checkbox" name="id[]" value="<?php echo $bill->getId(); ?>" onClick="stopCheckbox(this);"/>
 								</td>
-								<th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getId(); ?>
+								<th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getId(); ?>
 								</th>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getPlate() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getPlate() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getBrand() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getBrand() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getModel() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getModel() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getYear() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getYear() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getColor() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getColor() ?>
 								</td>
-								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
-									<?php echo $vehicle->getClientID() ?>
+								<td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $bill->getId(); ?>')">
+									<?php echo $bill->getClientID() ?>
 								</td>
 							</tr>
 							<?php

@@ -33,7 +33,7 @@
             return Client::parseClient($this->conn()->query("SELECT * FROM CLIENTES WHERE ID_CLIENTE = $id"));
         }
 
-        // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
+        // Devuelve el ID que le corresponde a un hipotético nuevo cliente (el valor del autoincrement)
         public function getNewClientID() {
             $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'CLIENTES'");
     
@@ -47,7 +47,7 @@
              return Vehicle::parseVehicle($this->conn()->query("SELECT * FROM VEHICULOS WHERE ID_VEHICULO = $id"));
         }
 
-        // Devuelve el ID que le corresponde a un hipotetico nuevo vehículo (el valor del autoincrement)
+        // Devuelve el ID que le corresponde a un hipotético nuevo vehículo (el valor del autoincrement)
         public function getNewVehicleID(){
             return $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'VEHICULOS'")->fetch_assoc()['AUTO_INCREMENT'];
         }
@@ -60,7 +60,7 @@
             return Replacement::parseReplacement($this->conn()->query("SELECT * FROM REPUESTOS WHERE ID_REPUESTO = $id"));
         }
 
-        // Devuelve el ID que le corresponde a un hipotetico nuevo cliente (el valor del autoincrement)
+        // Devuelve el ID que le corresponde a un hipotético nuevo repuesto (el valor del autoincrement)
         public function getNewReplacementID() {
             $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'REPUESTOS'");
     
@@ -84,19 +84,44 @@
             return $list;
         }
 
-        public function getReplacementList() {
-            $replacementList = $this->conn()->query("SELECT * FROM repuestos");
+        public function getVehicleList() {
+            $vehicle_list = $this->conn()->query("SELECT * FROM vehiculos");
 
-            $list = "<label for=\"selectOwnerList\">Línea de factura</label>" .
-                      "<select class=\"form-control\" name=\"selectReplacementList\" id=\"selectReplacementList\">";
+            $list = "<label for=\"selectVehicleList\">Vehículo*</label>" .
+                      "<select class=\"form-control\" name=\"selectVehicleList\" id=\"selectVehicleList\">";
 
-            for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
-                $replacement = Replacement::parseReplacement($replacementList);
-                $list .= "<option value='" . $replacement->getId() . "'>" . $replacement->getRef() . "</option>";
+            for ($i = 0; $i < mysqli_num_rows($vehicle_list); $i++) {
+                $vehicle = Vehicle::parseVehicle($vehicle_list);
+                $list .= "<option value='" . $vehicle->getId() . "'>" . $vehicle->getPlate() . "</option>";
             }
 
             $list .= "</select>";
 
             return $list;
+        }
+
+        public function getReplacementListAsArray() {
+            $replacementList = $this->conn()->query("SELECT * FROM repuestos");
+
+            $list = "<label for='selectReplacementList'>Repuesto</label>" .
+                      "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList'>";
+
+            for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
+                $replacement = Replacement::parseReplacement($replacementList);
+                $list .= "<option value='" . $replacement->getId() . "' data-price='" . $replacement->getPrice() . "'>" . $replacement->getRef() . "</option>";
+            }
+
+            $list .= "</select>";
+
+            return $list;
+        }
+
+// -----------------------------------------  M É T O D O S  S O B R E  L A  T A B L A  R E P U E S T O S  -----------------------------------------
+
+        // Devuelve el ID que le corresponde a una hipotético nuevo cliente (el valor del autoincrement)
+        public function getNewBillID() {
+            $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'FACTURA'");
+
+            return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
 }

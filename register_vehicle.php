@@ -3,7 +3,7 @@
 	include "classes/database.php";
     include "classes/client_class.php";
     include "classes/vehicle_class.php";
-
+    include "util/util.php";
 
     controlAccess();
     
