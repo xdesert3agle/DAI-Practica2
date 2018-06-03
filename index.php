@@ -35,6 +35,11 @@
                     <li class="nav-item">
 						<a class="nav-link" href="login.php">Acceso administrador</a>
 					</li>
+                    <li class="nav-item" style="margin-top: 6px">
+                        <a href="logout.php">
+                            <img src="resources/img/logout.png" width="20" height="20" alt="Logout">
+                        </a>
+                    </li>
 				</ul>
 			</div>
 		</nav>

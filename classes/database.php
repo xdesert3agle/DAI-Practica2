@@ -71,34 +71,32 @@
         public function getClientList() {
             $clientList = $this->conn()->query("SELECT * FROM clientes");
 
-            $select = "<label for=\"selectOwnerList\">Dueño del vehículo</label>" .
+            $list = "<label for=\"selectOwnerList\">Dueño del vehículo</label>" .
                       "<select class=\"form-control\" name=\"selectOwnerList\" id=\"selectOwnerList\">";
 
             for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                 $client = Client::parseClient($clientList);
-
-                $select .= "<option value='" . $client->getId() . "'>" . "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() . "</option>";
+                $list .= "<option value='" . $client->getId() . "'>" . "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() . "</option>";
             }
 
-            $select .= "</select>";
+            $list .= "</select>";
 
-            return $select;
+            return $list;
         }
 
         public function getReplacementList() {
             $replacementList = $this->conn()->query("SELECT * FROM repuestos");
 
-            $select = "<label for=\"selectOwnerList\">Línea de factura</label>" .
+            $list = "<label for=\"selectOwnerList\">Línea de factura</label>" .
                       "<select class=\"form-control\" name=\"selectReplacementList\" id=\"selectReplacementList\">";
 
             for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
                 $replacement = Replacement::parseReplacement($replacementList);
-
-                $select .= "<option value='" . $replacement->getId() . "'>" . $replacement->getRef() . "</option>";
+                $list .= "<option value='" . $replacement->getId() . "'>" . $replacement->getRef() . "</option>";
             }
 
-            $select .= "</select>";
+            $list .= "</select>";
 
-            return $select;
+            return $list;
         }
 }

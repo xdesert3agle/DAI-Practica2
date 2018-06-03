@@ -42,14 +42,20 @@
                     <li class="nav-item">
 						<a class="nav-link" href="login.php">Acceso administrador</a>
 					</li>
+                    <li class="nav-item" style="margin-top: 6px">
+                        <a href="logout.php">
+                            <img src="resources/img/logout.png" width="20" height="20" alt="Logout">
+                        </a>
+                    </li>
 				</ul>
 			</div>
 		</nav>
 		<div class="container" style="margin-top: 15px">
 			<div class="row">
                 <div class="form-group">
-                <?php echo $db->getReplacementList(); ?>
-            </div>
-		</div>
+                    <?php echo $db->getReplacementList(); ?>
+                </div>
+		    </div>
+        </div>
 	</body>
 </html>
