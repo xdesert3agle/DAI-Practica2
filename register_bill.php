@@ -36,8 +36,10 @@
             $replacementListName[$i] = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE id_repuesto = $replacementListValue[$i]"))->getRef();
         }
 
+        // Se inserta primero la factura
         $db->conn()->query("INSERT INTO factura VALUES ($id, '$plate', $hours, $cph, $workPrice,'$creationDate', '$payedDate', $base, $iva, $total)");
 
+        // Se van insertando todas las líneas de detalle de la factura en un bucle
         for ($i = 0; $i < count($replacementListValue); $i++){
             $db->conn()->query("INSERT INTO detalle_factura (numero_factura, referencia, unidades, subtotal) VALUES ($id, '$replacementListName[$i]', $units[$i], $amount[$i])");
         }
