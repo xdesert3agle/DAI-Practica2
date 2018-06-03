@@ -65,7 +65,7 @@
         }
 
         // Crea y devuelve un objeto Vehículo a partir del resultado de una consulta
-        public function parseVehicle($result){
+        public static function parseVehicle($result){
             $result = $result->fetch_assoc();
             
             $vehicle = new Vehicle;

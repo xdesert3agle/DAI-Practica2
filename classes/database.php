@@ -103,12 +103,11 @@
         public function getReplacementListAsArray() {
             $replacementList = $this->conn()->query("SELECT * FROM repuestos");
 
-            $list = "<label for='selectReplacementList'>Repuesto</label>" .
-                      "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList'>";
+            $list = "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList' onChange='changePrice(this); calcLinePrice(this); doTheMath();'>";
 
             for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
                 $replacement = Replacement::parseReplacement($replacementList);
-                $list .= "<option value='" . $replacement->getId() . "' data-price='" . $replacement->getPrice() . "'>" . $replacement->getRef() . "</option>";
+                $list .= "<option value='" . $replacement->getId() . "' data-price='" . $replacement->getPrice() . "' data-percent='" . $replacement->getPercent() . "'>" . $replacement->getRef() . "</option>";
             }
 
             $list .= "</select>";

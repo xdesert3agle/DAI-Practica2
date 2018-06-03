@@ -18,8 +18,9 @@
         $plate = $_POST['selectVehicleList'];
         $hours = $_POST['hours'];
         $cph = $_POST['cph'];
-        $creationDate = $_POST['creationDate'];
-        $payedDate = $_POST['payedDate'];
+        $workPrice = $_POST['workPrice'];
+        $creationDate = parseDateToYMD($_POST['creationDate']);
+        $payedDate = parseDateToYMD($_POST['payedDate']);
         $base = $_POST['base'];
         $iva = $_POST['iva'];
         $total = $_POST['total'];
@@ -28,12 +29,10 @@
         $replacementList = $_POST['selectReplacementList'];
         $units = $_POST['units'];
 
-        //$db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
-
-        echo "INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')";
+        $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, mano_obra,fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
 
         for ($i = 0; $i < count($replacementList); $i++){
- //           $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
+            $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
             echo "Producto: $replacementList[$i], cantidad: $units[$i] unidades.";
         }
 
@@ -54,49 +53,105 @@
 
                 let replacement = row.insertCell(0);
                 let quantity = row.insertCell(1);
+                let price = row.insertCell(2);
+                let gainPercent = row.insertCell(3);
+                let subtotal = row.insertCell(4);
 
                 let currentLine = table.rows.length;
+                let headers = document.getElementById('headers');
+
+                if (currentLine === 1) {
+                    console.log("headers");
+                    headers.innerHTML = "<tr><th>Pieza de repuesto</th><th>Cantidad</th><th>Precio</th><th>Porcentaje de ganancia</th><th>Importe</th></tr>";
+                }
 
                 replacement.innerHTML = "<?php echo $db->getReplacementListAsArray() ?>";
 
                 let newSelect = document.getElementById('selectReplacementList');
                 newSelect.id = 'selectReplacementList' + currentLine;
+                newSelect.setAttribute("data-row", currentLine);
 
-                quantity.innerHTML = "<label for='units'>Cantidad</label>" +
-                    "<input type='number' class='form-control' name='units[]' id='units" + currentLine + "' data-row='" + currentLine + "' onInput='calcLinePrice(this); calcBase();' required>";
-
+                quantity.innerHTML = "<input type='number' class='form-control' name='units[]' id='units" + currentLine + "' data-row='" + currentLine + "' value='0' onInput='calcLinePrice(this); doTheMath();' required>";
                 quantity.innerHTML += "<input type='hidden' id='row" + currentLine + "_price'>";
 
-                if (table.rows.length === 1){
+                price.classList.add("align-middle");
+                price.id = "rep" + currentLine + "_price";
+                price.innerHTML = newSelect.options[newSelect.selectedIndex].getAttribute('data-price') + " €";
+
+                subtotal.classList.add("align-middle");
+                subtotal.id = "rep" + currentLine + "_amount";
+                subtotal.innerHTML = "0 €";
+
+                gainPercent.classList.add("align-middle");
+                gainPercent.id = "rep" + currentLine + "_percent";
+                gainPercent.innerHTML = newSelect.options[newSelect.selectedIndex].getAttribute('data-percent') + " %";
+
+                if (currentLine === 1){
                     document.getElementById('add_bill').innerHTML += "<button type='submit' class='btn btn-primary' style='margin-left: -2px;' form='createBill' name='add_bill' id='btnCreateBill'>Crear factura</button>";
                 }
             }
 
             function calcLinePrice(changedElement){
                 let changedRowNumber = changedElement.getAttribute('data-row');
-
                 let selReplacementList = document.getElementById('selectReplacementList' + changedRowNumber);
-                let selectedReplacementPrice = selReplacementList.options[selReplacementList.selectedIndex].getAttribute('data-price');
-
-                let units = document.getElementById('units' + changedRowNumber);
+                let selectedReplacementPrice = parseInt(selReplacementList.options[selReplacementList.selectedIndex].getAttribute('data-price'));
+                let selectedReplacementPercent = parseInt(selReplacementList.options[selReplacementList.selectedIndex].getAttribute('data-percent'));
+                let units = parseInt(document.getElementById('units' + changedRowNumber).value);
+                let amount = document.getElementById('rep' + changedRowNumber + '_amount');
 
                 let changedRowPriceContainer = document.getElementById('row' + changedRowNumber + '_price');
+                changedRowPriceContainer.value = units * selectedReplacementPrice;
 
-                changedRowPriceContainer.value = parseInt(units.value) * parseInt(selectedReplacementPrice);
+                let gain = changedRowPriceContainer.value * (selectedReplacementPercent / 100);
+
+                amount.innerHTML = !isNaN(changedRowPriceContainer.value) ? parseInt(changedRowPriceContainer.value) + gain + " €" : "0 €";
             }
 
-            function calcBase(){
+            function changePrice(replacementList){
+                let pattern = /\d+/g;
+
+                let selectedReplacementPrice = replacementList.options[replacementList.selectedIndex].getAttribute('data-price');
+                document.getElementById('rep' + replacementList.id.match(pattern) + '_price').innerText = selectedReplacementPrice + " €";
+
+                let selectedReplacementPercent = replacementList.options[replacementList.selectedIndex].getAttribute('data-percent');
+                document.getElementById('rep' + replacementList.id.match(pattern) + '_percent').innerText = selectedReplacementPercent + " %";
+            }
+
+            function doTheMath(){
                 let numberOfLines = document.getElementById('billLines').rows.length;
                 let base = document.getElementById('base');
+                let iva = document.getElementById('iva');
+                let total = document.getElementById('total');
+                let pattern = '[+-]?([0-9]*[.])?[0-9]+';
+                let workPrice = document.getElementById('workPrice').value;
                 let calc = 0;
 
-                console.log("Numero de lineas: " + numberOfLines);
-
-                for (let i = 1; i <= numberOfLines; i++){
-                    calc += parseInt(document.getElementById('row' + i + "_price").value);
+                for (var i = 1; i <= numberOfLines; i++){
+                    let amount = document.getElementById('rep' + i + "_amount").innerText.match(pattern);
+                    calc += !isNaN(parseFloat(amount)) ? parseFloat(amount) : 0;
                 }
 
-                base.value = calc;
+                calc += parseFloat(workPrice);
+
+                base.value = !isNaN(calc) ? calc : 0;
+                iva.value = base.value * 0.21;
+                total.value = parseFloat(base.value) + parseFloat(iva.value);
+            }
+
+            function calcWorkPrice(){
+                let hours = document.getElementById('hours').value;
+                let cph = document.getElementById('cph').value;
+                cph.replace(",", ".");
+                let workPrice = document.getElementById('workPrice');
+
+                if (hours !== "" && cph !== ""){
+                    workPrice.value = hours * cph;
+                } else {
+                    workPrice.value = 0;
+                }
+
+
+                doTheMath();
             }
         </script>
 	</head>
@@ -148,22 +203,31 @@
                     </div>
                     <div class="form-group col-2">
                         <label for="hours">Horas*</label>
-                        <input type="text" class="form-control" name="hours" id="hours" maxlength="2" required="required">
+                        <input type="number" class="form-control" name="hours" id="hours" min="0" maxlength="4" onInput="calcWorkPrice();" required="required">
                     </div>
                     <div class="form-group col-2">
                         <label for="cph">Precio por hora*</label>
-                        <input type="text" class="form-control" name="cph" id="cph" maxlength="3" required="required">
+                        <input type="number" class="form-control" name="cph" id="cph" step="0.5" maxlength="6" onInput="calcWorkPrice();" required="required">
                     </div>
                     <div class="form-group col-sm">
                         <label for="creationDate">Fecha de emisión*</label>
-                        <input type="text" class="form-control" name="creationDate" id="creationDate" maxlength="50" required="required">
+                        <input type="date" class="form-control" name="creationDate" id="creationDate" required="required">
                     </div>
                     <div class="form-group col-sm">
                         <label for="payedDate">Fecha de pago*</label>
-                        <input type="text" class="form-control" name="payedDate" id="payedDate" maxlength="4" required="required">
+                        <input type="date" class="form-control" name="payedDate" id="payedDate" required="required">
                     </div>
                 </div>
                 <div class="row">
+                    <div class="form-group col-sm">
+                        <label for="base">Mano de obra</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="workPrice" id="workPrice" value="0" readonly>
+                            <div class="input-group-append">
+                                <div class="input-group-text">€</div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group col-sm">
                         <label for="base">Base imponible</label>
                         <div class="input-group">
@@ -174,7 +238,7 @@
                         </div>
                     </div>
                     <div class="form-group col-sm">
-                        <label for="iva">I.V.A.</label>
+                        <label for="iva">I.V.A. (21%)</label>
                         <div class="input-group">
                             <input type="text" class="form-control" name="iva" id="iva" value="0" readonly>
                             <div class="input-group-append">
@@ -196,14 +260,17 @@
                     <div class="form-group col-sm">
                         <table class="table no-top-thead" style="margin-left: -13px;">
                             <thead>
-                            <tr>
-                                <th>
-                                    <h1>Líneas de factura</h1>
-                                </th>
-                                <th class="text-right">
-                                    <a class="btn btn-primary" name="add_vehicle" onClick="addNewLine();">Añadir línea</a>
-                                </th>
-                            </tr>
+                                <tr>
+                                    <th>
+                                        <h1>Líneas de factura</h1>
+                                    </th>
+                                    <th class="text-right" colspan="99">
+                                        <a class="btn btn-primary" name="add_vehicle" onClick="addNewLine();">Añadir línea</a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead id="headers">
+
                             </thead>
                             <tbody id="billLines">
 

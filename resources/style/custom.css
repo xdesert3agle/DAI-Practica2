@@ -11,6 +11,7 @@
 
 .no-top-thead thead tr th{
     border-top-color: white!important;
+    border-bottom: 0px;
 }
 
 .image-upload > input {
