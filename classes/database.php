@@ -68,7 +68,7 @@
         }
 
 
-        public function getClientList() {
+        public function getClientList($owner = -1) {
             $clientList = $this->conn()->query("SELECT * FROM clientes");
 
             $list = "<label for=\"selectOwnerList\">Dueño del vehículo</label>" .
@@ -76,7 +76,7 @@
 
             for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                 $client = Client::parseClient($clientList);
-                $list .= "<option value='" . $client->getId() . "'>" . "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() . "</option>";
+                $list .= "<option value='" . $client->getId() . "' " . ($client->getId() == $owner && $owner != -1 ? 'selected' : null) . ">" . "#" . $client->getID() . " - " . $client->getSurname1() . " " . $client->getSurname2() . " " . $client->getName() . "</option>";
             }
 
             $list .= "</select>";
@@ -84,7 +84,7 @@
             return $list;
         }
 
-        public function getVehicleList() {
+        public function getVehicleList($selectedPlate = -1) {
             $vehicle_list = $this->conn()->query("SELECT * FROM vehiculos");
 
             $list = "<label for=\"selectVehicleList\">Vehículo*</label>" .
@@ -92,7 +92,7 @@
 
             for ($i = 0; $i < mysqli_num_rows($vehicle_list); $i++) {
                 $vehicle = Vehicle::parseVehicle($vehicle_list);
-                $list .= "<option value='" . $vehicle->getId() . "'>" . $vehicle->getPlate() . "</option>";
+                $list .= "<option value='" . $vehicle->getId() . "' " . ($vehicle->getPlate() == $selectedPlate && $selectedPlate != -1 ? 'selected' : null) . ">" . $vehicle->getPlate() . "</option>";
             }
 
             $list .= "</select>";
@@ -100,14 +100,14 @@
             return $list;
         }
 
-        public function getReplacementListAsArray() {
+        public function getReplacementListAsArray($selected = -1) {
             $replacementList = $this->conn()->query("SELECT * FROM repuestos");
 
             $list = "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList' onChange='changePrice(this); calcLinePrice(this); doTheMath();'>";
 
             for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
                 $replacement = Replacement::parseReplacement($replacementList);
-                $list .= "<option value='" . $replacement->getId() . "' data-price='" . $replacement->getPrice() . "' data-percent='" . $replacement->getPercent() . "'>" . $replacement->getRef() . "</option>";
+                $list .= "<option value='" . $replacement->getId() . "' data-price='" . $replacement->getPrice() . "' data-percent='" . $replacement->getPercent() . "' " . ($replacement->getRef() == $selected && $selected != -1 ? 'selected' : null) . ">" . $replacement->getRef() . "</option>";
             }
 
             $list .= "</select>";

@@ -7,42 +7,26 @@
     include "util/util.php";
 
     controlAccess();
-    
+
     $db = Database::getInstance();
+    
+    if (isset($_GET['bill_id'])) {
+        $selBillID = $_GET['bill_id'];
+        $bill = $db->conn()->query("SELECT * FROM factura WHERE numero_factura = $selBillID")->fetch_assoc();
+    }
 
-    // Crear factura
-    if (isset($_POST['add_bill'])){
+    // Botón de editar vehículo
+    if (isset($_POST['edit_bill'])){
+        $id = $_POST['id'][0];
+        $plate = $_POST['plate'];
+        $owner = $_POST['selectOwnerList'];
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $year = $_POST['year'];
+        $color = $_POST['color'];
 
-        // Factura
-        $id = $db->getNewBillID();
-        $plateID = $_POST['selectVehicleList'];
-        $plate = Vehicle::parseVehicle($db->conn()->query("SELECT * FROM vehiculos WHERE id_vehiculo = $plateID"))->getPlate();
-        $hours = $_POST['hours'];
-        $cph = $_POST['cph'];
-        $workPrice = $_POST['workPrice'];
-        $creationDate = $_POST['creationDate'];
-        $payedDate = $_POST['payedDate'];
-        $base = $_POST['base'];
-        $iva = $_POST['iva'];
-        $total = $_POST['total'];
-
-        // Líneas de factura
-        $replacementListValue = $_POST['selectReplacementList'];
-        $units = $_POST['units'];
-        $amount = $_POST['amount'];
-
-        // Se sacan los nombres de cada pieza añadida a la factura
-        for ($i = 0; $i < count($replacementListValue); $i++) {
-            $replacementListName[$i] = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE id_repuesto = $replacementListValue[$i]"))->getRef();
-        }
-
-        $db->conn()->query("INSERT INTO factura VALUES ($id, '$plate', $hours, $cph, $workPrice,'$creationDate', '$payedDate', $base, $iva, $total)");
-
-        for ($i = 0; $i < count($replacementListValue); $i++){
-            $db->conn()->query("INSERT INTO detalle_factura (numero_factura, referencia, unidades, subtotal) VALUES ($id, '$replacementListName[$i]', $units[$i], $amount[$i])");
-        }
-
-        header("Location: bill_list.php");
+        $db->conn()->query("UPDATE VEHICULOS SET MATRICULA = '$plate', MARCA ='$brand', MODELO ='$model', ANIO = '$year', COLOR ='$color', ID_CLIENTE = '$owner' WHERE ID_VEHICULO = '$id'");
+        header("Location: vehicle_list.php");
     }
 
 ?>
@@ -79,7 +63,6 @@
 
                 quantity.innerHTML = "<input type='number' class='form-control' name='units[]' id='units" + currentLine + "' data-row='" + currentLine + "' value='0' onInput='calcLinePrice(this); doTheMath();' required>";
                 quantity.innerHTML += "<input type='hidden' id='row" + currentLine + "_price'>";
-                quantity.innerHTML += "<input type='hidden' id='rep" + currentLine + "_hAmount' name='amount[]' value='0'>";
 
                 price.classList.add("align-middle");
                 price.id = "rep" + currentLine + "_price";
@@ -107,7 +90,7 @@
 					<li class="nav-item">
 						<a class="nav-link" href="client_list.php">Clientes</a>
                     </li>
-                    <li class="nav-item">
+					<li class="nav-item">
 						<a class="nav-link" href="vehicle_list.php">Vehículos</a>
 					</li>
                     <li class="nav-item">
@@ -133,40 +116,40 @@
 		</nav>
 
         <div class="container" style="margin-top: 15px">
-            <h1>Crear una factura</h1>
+            <h1>Modificar factura</h1>
             <hr>
-            
+
             <form id="createBill" method="POST">
                 <div class="row">
                     <div class="form-group col-1">
                         <label for="id_disabled">ID</label>
-                        <input type="text" class="form-control" id="id_disabled" name="id_disabled" value="<?php echo $db->getNewBillID(); ?>" disabled>
+                        <input type="text" class="form-control" id="id_disabled" name="id_disabled" value="<?php echo $bill['numero_factura']; ?>" disabled>
                     </div>
                     <div class="form-group col-2">
-                        <?php echo $db->getVehicleList(); ?>
+                        <?php echo $db->getVehicleList($bill['matricula']); ?>
                     </div>
                     <div class="form-group col-2">
                         <label for="hours">Horas*</label>
-                        <input type="number" class="form-control" name="hours" id="hours" min="0" maxlength="4" onInput="calcWorkPrice();" required="required">
+                        <input type="number" class="form-control" name="hours" id="hours" min="0" maxlength="4" onInput="calcWorkPrice();" value="<?php echo $bill['horas'] ?>" required="required">
                     </div>
                     <div class="form-group col-2">
                         <label for="cph">Precio por hora*</label>
-                        <input type="number" class="form-control" name="cph" id="cph" step="0.5" maxlength="6" onInput="calcWorkPrice();" required="required">
+                        <input type="number" class="form-control" name="cph" id="cph" step="0.5" maxlength="6" onInput="calcWorkPrice();" value="<?php echo $bill['precio_hora'] ?>" required="required">
                     </div>
                     <div class="form-group col-sm">
                         <label for="creationDate">Fecha de emisión*</label>
-                        <input type="date" class="form-control" name="creationDate" id="creationDate" required="required">
+                        <input type="date" class="form-control" name="creationDate" id="creationDate" value="<?php echo $bill['fecha_emision'] ?>" required="required">
                     </div>
                     <div class="form-group col-sm">
                         <label for="payedDate">Fecha de pago*</label>
-                        <input type="date" class="form-control" name="payedDate" id="payedDate" required="required">
+                        <input type="date" class="form-control" name="payedDate" id="payedDate" value="<?php echo $bill['fecha_pago'] ?>" required="required">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-sm">
                         <label for="base">Mano de obra</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="workPrice" id="workPrice" value="0" readonly>
+                            <input type="text" class="form-control" name="workPrice" id="workPrice" value="<?php echo $bill['mano_obra'] ?>" readonly>
                             <div class="input-group-append">
                                 <div class="input-group-text">€</div>
                             </div>
@@ -175,7 +158,7 @@
                     <div class="form-group col-sm">
                         <label for="base">Base imponible</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="base" id="base" value="0" readonly>
+                            <input type="text" class="form-control" name="base" id="base" value="<?php echo $bill['base_imponible'] ?>" readonly>
                             <div class="input-group-append">
                                 <div class="input-group-text">€</div>
                             </div>
@@ -184,7 +167,7 @@
                     <div class="form-group col-sm">
                         <label for="iva">I.V.A. (21%)</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="iva" id="iva" value="0" readonly>
+                            <input type="text" class="form-control" name="iva" id="iva" value="<?php echo $bill['iva'] ?>" readonly>
                             <div class="input-group-append">
                                 <div class="input-group-text">€</div>
                             </div>
@@ -193,7 +176,7 @@
                     <div class="form-group col-sm">
                         <label for="total">Total</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="total" id="total" value="0" readonly>
+                            <input type="text" class="form-control" name="total" id="total" value="<?php echo $bill['total'] ?>" readonly>
                             <div class="input-group-append">
                                 <div class="input-group-text">€</div>
                             </div>
@@ -204,20 +187,60 @@
                     <div class="form-group col-sm">
                         <table class="table no-top-thead" style="margin-left: -13px;">
                             <thead>
-                                <tr>
-                                    <th>
-                                        <h1>Líneas de factura</h1>
-                                    </th>
-                                    <th class="text-right" colspan="99">
-                                        <a class="btn btn-primary" name="add_vehicle" onClick="addNewLine();">Añadir línea</a>
-                                    </th>
-                                </tr>
+                            <tr>
+                                <th>
+                                    <h1>Líneas de factura</h1>
+                                </th>
+                                <th class="text-right" colspan="99">
+                                    <a class="btn btn-primary" name="add_vehicle" onClick="addNewLine();">Añadir línea</a>
+                                </th>
+                            </tr>
                             </thead>
                             <thead id="headers">
-
+                                <tr>
+                                    <th>Pieza de repuesto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Porcentaje de ganancia</th>
+                                    <th>Importe</th>
+                                </tr>
                             </thead>
                             <tbody id="billLines">
+                            <?php
 
+                                $id = $bill['numero_factura'];
+
+                                $lineCount = $db->conn()->query("SELECT COUNT(*) AS LINE_COUNT FROM detalle_factura WHERE numero_factura = $id")->fetch_assoc()['LINE_COUNT'];
+
+                                for ($i = 0; $i < $lineCount; $i++) {
+                                    $line = $db->conn()->query("SELECT * FROM detalle_factura WHERE numero_factura = $id")->fetch_assoc();
+                                    $replacementRef = $line['referencia'];
+                                    $replacement = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE referencia = '$replacementRef'"));
+                            ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $db->getReplacementListAsArray($line['referencia']); ?>
+                                        </td>
+                                        <td>
+                                            <input type='number' class='form-control' name='units[]' id='units<?php echo $i ?>' data-row='<?php echo $i ?>' value="<?php echo $line['unidades'] ?>" onInput='calcLinePrice(this); doTheMath();' required>
+                                            <input type="hidden" id='row<?php echo $i ?>_price'>
+                                        </td>
+                                        <td class="align-middle" id="rep<?php echo $i ?>_price">
+                                            <?php echo $replacement->getPrice() . " €" ?>
+                                        </td>
+                                        <td class="align-middle" id="rep<?php echo $i ?>_percent">
+                                            <?php echo $replacement->getPercent() . " %" ?>
+                                        </td>
+                                        <td class="align-middle" id="rep<?php echo $i ?>_amount">
+                                            <?php echo $replacement->getPercent() . " %" ?>
+                                        </td>
+                                    </tr>
+
+                            <?php
+
+                                }
+
+                            ?>
                             </tbody>
                         </table>
                         <div id="add_bill"></div>

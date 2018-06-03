@@ -85,7 +85,7 @@
                         <input type="text" class="form-control" name="plate" id="plate" value="<?php echo $vehicle->getPlate(); ?>" maxlength="10" required="required">
                     </div>
                     <div class="form-group col-sm">
-                        <?php echo $db->getClientList() ?>
+                        <?php echo $db->getClientList($vehicle->getClientID()) ?>
                     </div>
                 </div>
                 <div class="row">
