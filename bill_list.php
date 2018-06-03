@@ -51,10 +51,10 @@
 				</ul>
 			</div>
 		</nav>
-		<div class="container" style="margin-top: 15px">
+		<div class="container">
             <form action="delete_element.php" method="POST" class="pt-0 mt-0">
                 <input type='hidden' id='action' name='action' value='user_delete'>
-                <input type="hidden" name="target" value="vehicle">
+                <input type="hidden" name="target" value="bill">
                 <table class="table table-hover no-top-thead">
                     <thead>
                     <tr>
@@ -110,10 +110,10 @@
                                 <?php echo $bill['precio_hora'] ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['fecha_emision'] ?>
+                                <?php echo parseDateToYMD($bill['fecha_emision']) ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['fecha_pago'] ?>
+                                <?php echo parseDateToYMD($bill['fecha_pago']) ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
                                 <?php echo $bill['base_imponible'] ?>

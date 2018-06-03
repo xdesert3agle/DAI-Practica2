@@ -52,7 +52,7 @@
 		<div class="container-fluid">
 			<form action="delete_element.php" method="POST" class="pt-0 mt-0">
 				<input type='hidden' id='action' name='action' value='user_delete'>
-				<input type="hidden" name="target" value="client">
+				<input type="hidden" name="target" value="bill">
 				<table class="table table-hover no-top-thead">
 					<thead>
 						<tr>

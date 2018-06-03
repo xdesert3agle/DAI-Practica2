@@ -19,25 +19,29 @@
         $hours = $_POST['hours'];
         $cph = $_POST['cph'];
         $workPrice = $_POST['workPrice'];
-        $creationDate = parseDateToYMD($_POST['creationDate']);
-        $payedDate = parseDateToYMD($_POST['payedDate']);
+        $creationDate = $_POST['creationDate'];
+        $payedDate = $_POST['payedDate'];
         $base = $_POST['base'];
         $iva = $_POST['iva'];
         $total = $_POST['total'];
 
         // Líneas de factura
-        $replacementList = $_POST['selectReplacementList'];
+        $replacementListValue = $_POST['selectReplacementList'];
         $units = $_POST['units'];
 
-        $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, mano_obra,fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
-
-        for ($i = 0; $i < count($replacementList); $i++){
-            $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
-            echo "Producto: $replacementList[$i], cantidad: $units[$i] unidades.";
+        for ($i = 0; $i < count($replacementListValue); $i++) {
+            $replacementListName[$i] = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE id_repuesto = $replacementListValue[$i]"))->getRef();
         }
 
-        //$result = $db->conn()->query("INSERT INTO factura (numero_factura, matricula, horas, precio_hora, fecha_emision, fecha_pago, base_imponible, iva, total) VALUES ('$id', '$plate', '$hours', '$cph', '$creationDate', '$payedDate'. '$base', '$iva', '$total')");
-        //header("Location: bill_list.php");
+        echo "INSERT INTO factura VALUES ($id, '$plate', $hours, $cph, $workPrice,'$creationDate', '$payedDate', $base, $iva, $total)";
+        $db->conn()->query("INSERT INTO factura VALUES ($id, '$plate', $hours, $cph, $workPrice,'$creationDate', '$payedDate', $base, $iva, $total)");
+
+        for ($i = 0; $i < count($replacementListValue); $i++){
+            $replacementName =
+            $db->conn()->query("INSERT INTO detalle_factura (numero_factura, referencia, unidades) VALUES ($id, '$replacementListName[$i]', $units[$i])");
+        }
+
+        header("Location: bill_list.php");
     }
 
 ?>

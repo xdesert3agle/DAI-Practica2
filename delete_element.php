@@ -10,29 +10,41 @@
     $target = $_POST["target"];
     $deleteQuery = "";
 
-    switch ($target) {
-        case "client":
-            $deleteQuery = "DELETE FROM CLIENTES WHERE ID_CLIENTE = ";
-            $redirectDest = "client_list.php";
-            break;
-        
-        case "vehicle":
-            $deleteQuery = "DELETE FROM VEHICULOS WHERE ID_VEHICULO = ";
-            $redirectDest = "vehicle_list.php";
-            break;
 
-        case "replacement":
-            $deleteQuery = "DELETE FROM REPUESTOS WHERE ID_REPUESTO = ";
-            $redirectDest = "replacement_list.php";
-            break;
+    if ($target != "bill") {
+        switch ($target) {
+            case "client":
+                $deleteQuery = "DELETE FROM clientes WHERE id_cliente = ";
+                $redirectDest = "client_list.php";
+                break;
+
+            case "vehicle":
+                $deleteQuery = "DELETE FROM vehiculos WHERE id_vehiculo = ";
+                $redirectDest = "vehicle_list.php";
+                break;
+
+            case "replacement":
+                $deleteQuery = "DELETE FROM repuestos WHERE id_repuesto = ";
+                $redirectDest = "replacement_list.php";
+                break;
+        }
+
+        for ($i = 0; $i < count($elementList); $i++) {
+            $db->conn()->query($deleteQuery . $elementList[$i]);
+        }
+
+    } else {
+        $deleteBillQuery = "DELETE FROM factura WHERE numero_factura = ";
+        $deleteBillLineQuery = "DELETE FROM detalle_factura WHERE numero_factura = ";
+        $redirectDest = "bill_list.php";
+
+        for ($i = 0; $i < count($elementList); $i++) {
+            $db->conn()->query($deleteBillLineQuery . $elementList[$i]);
+            $db->conn()->query($deleteBillQuery . $elementList[$i]);
+        }
     }
 
-    for ($i = 0; $i < count($elementList); $i++) {
-        $db->conn()->query($deleteQuery . $elementList[$i]);
-    }
 
     header("Location: $redirectDest");
-
-?>
 
 
