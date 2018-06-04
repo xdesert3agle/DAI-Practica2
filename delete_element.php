@@ -10,7 +10,6 @@
     $target = $_POST["target"];
     $deleteQuery = "";
 
-
     if ($target != "bill") {
         switch ($target) {
             case "client":

@@ -71,18 +71,18 @@
                     </tr>
                     </thead>
                     <thead class="thead-light">
-                    <tr>
-                        <th></th>
-                        <th># Factura</th>
-                        <th>Matricula</th>
-                        <th>Horas</th>
-                        <th>Precio/hora</th>
-                        <th>Fecha emisión</th>
-                        <th>Fecha pago</th>
-                        <th>Base imponible</th>
-                        <th>IVA</th>
-                        <th>Total</th>
-                    </tr>
+                        <tr>
+                            <th></th>
+                            <th># Factura</th>
+                            <th>Matricula</th>
+                            <th>Horas</th>
+                            <th>Precio/hora</th>
+                            <th>Fecha emisión</th>
+                            <th>Fecha pago</th>
+                            <th>Base imponible</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                        </tr>
                     </thead>
                     <tbody>
                     <?php

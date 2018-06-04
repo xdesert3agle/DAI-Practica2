@@ -40,12 +40,13 @@
 
         public function getPlateListFromClientID($clientID){
             $result = $this->conn->query("SELECT * FROM vehiculos WHERE id_cliente = $clientID");
+            $size = mysqli_num_rows($result);
             $plateList = array();
 
-            for ($i = 0; $i < mysqli_num_rows($result); $i++) {
-                $result = $result->fetch_assoc();
+            for ($i = 0; $i < $size; $i++) {
+                $plate = $result->fetch_assoc();
 
-                $plateList[$i] = $result['matricula'];
+                $plateList[$i] = $plate['matricula'];
             }
 
             return $plateList;
@@ -91,8 +92,8 @@
         public function getClientList($owner = -1, $label = -1, $emptySlot = 0) {
             $clientList = $this->conn()->query("SELECT * FROM clientes");
 
-            $list = $label !== 0 ? "<label for=\"selectOwnerList\">Dueño del vehículo</label>" : null;
-            $list = "<select class=\"form-control\" name=\"selectOwnerList\" id=\"selectOwnerList\">";
+            $list = $label !== 0 ? "<label for='selectOwnerList'>Dueño del vehículo</label>" : null;
+            $list .= "<select class=\"form-control\" name=\"selectOwnerList\" id=\"selectOwnerList\">";
             $list = $emptySlot !== 0 ? $list . "<option value='-1'>Selecciona un cliente</option>" : $list;
 
             for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {

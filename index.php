@@ -342,6 +342,22 @@
                         break;
 
                     case "filter_bills":
+
+                ?>
+                <thead class="thead-light">
+                    <tr>
+                        <th># Factura</th>
+                        <th>Matricula</th>
+                        <th>Horas</th>
+                        <th>Precio/hora</th>
+                        <th>Fecha emisión</th>
+                        <th>Fecha pago</th>
+                        <th>Base imponible</th>
+                        <th>IVA</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                    <?php
                         $billCreationStart = isset($_GET['billCreationStart']) ? $_GET['billCreationStart'] : null;
                         $billCreationEnd = isset($_GET['billCreationEnd']) ? $_GET['billCreationEnd'] : null;
                         $billPaymentStart = isset($_GET['billPaymentStart']) ? $_GET['billPaymentStart'] : null;
@@ -353,38 +369,39 @@
 
                         // Ha usado la opción de 'Emitidas entre dos fechas'
                         if ($billCreationStart != null || $billCreationEnd != null) {
-                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
-                                $query .= " AND";
-                            }
 
                             if ($billCreationStart != null) {
+                                if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                    $query .= " AND";
+                                }
+
                                 $query .= " fecha_emision >= '$billCreationStart'";
                             }
 
-                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
-                                $query .= " AND";
-                            }
-
                             if ($billCreationEnd != null) {
+                                if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                    $query .= " AND";
+                                }
+
                                 $query .= " fecha_emision <= '$billCreationEnd'";
                             }
                         }
 
                         // Ha usado la opción de 'Pagadas entre dos fechas'
                         if ($billPaymentStart != null || $billPaymentEnd != null) {
-                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
-                                $query .= " AND";
-                            }
-
                             if ($billPaymentStart != null) {
+                                if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                    $query .= " AND";
+                                }
+
                                 $query .= " fecha_pago >= '$billPaymentStart'";
                             }
 
-                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
-                                $query .= " AND";
-                            }
-
                             if ($billPaymentEnd != null) {
+                                if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                    $query .= " AND";
+                                }
+
                                 $query .= " fecha_pago <= '$billPaymentEnd'";
                             }
                         }
@@ -398,21 +415,77 @@
                         }
 
                         if ($owner != -1) {
+
+                            $clientName = $db->conn()->query("SELECT * FROM clientes WHERE id_cliente = $owner")->fetch_assoc()['nombre'];
+                            $plateList = $db->getPlateListFromClientID($owner);
+
                             if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
-                                $query .= " AND";
+                                $query .= " AND ";
                             }
 
-                            $clientName = $db->conn()->query("SELECT * FROM clientes WHERE id_cliente = $owner");
+                            for ($j = 0; $j < count($plateList); $j++) {
 
+                                if ($j === 0 && count($plateList) > 1) {
+                                    if (count($plateList) !== 1) {
+                                        $query .= " (";
+                                    }
+                                }
 
-                            $plateList = $db->getPlateListFromClientID($db->getClientFromPlate());
+                                if ($j === 0) {
+                                    $query .= " matricula = '$plateList[$j]'";
+                                } else {
+                                    $query .= " OR matricula = '$plateList[$j]'";
+                                }
+
+                                if ($j === count($plateList) - 1 && count($plateList) !== 1){
+                                    $query .= ")";
+                                }
+                            }
                         }
 
                         $lastWord = substr($query, strrpos($query, ' ') + 1);
 
                         $query = $lastWord !== "WHERE" ? $query : preg_replace('/\W\w+\s*(\W*)$/', '$1', $query);
 
-                        echo $query;
+                        $result = $db->conn()->query($query);
+
+                        for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+                            $bill = $result->fetch_assoc();
+                            ?>
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['numero_factura'] ?>
+                                    </th>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['matricula'] ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['horas'] ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['precio_hora'] ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo parseDateToYMD($bill['fecha_emision']) ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo parseDateToYMD($bill['fecha_pago']) ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['base_imponible'] ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['iva'] ?>
+                                    </td>
+                                    <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
+                                        <?php echo $bill['total'] ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <?php
+                        }
+
                         break;
                     }
 

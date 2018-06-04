@@ -50,7 +50,7 @@
             $db->conn()->query("UPDATE detalle_factura SET referencia = '$replacementListName[$i]', unidades = $units[$i] WHERE id_det_factura = $lineID[$i]");
         }
 
-        //header("Location: bill_list.php");
+        header("Location: bill_list.php");
     }
 
 ?>
