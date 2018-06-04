@@ -29,3 +29,30 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+
+function showSelectedForm(){
+    let selTarget = document.getElementById('selTarget');
+    let selOption = selTarget.options[selTarget.selectedIndex].value;
+
+    let clientsForm = document.getElementById('clientsForm');
+    let vehiclesForm = document.getElementById('vehiclesForm');
+    let billsForm = document.getElementById('billsForm');
+
+    clientsForm.style.display = "none";
+    vehiclesForm.style.display = "none";
+    billsForm.style.display = "none";
+
+    switch (selOption) {
+        case "clientsForm":
+            clientsForm.style.display = "inline";
+            break;
+
+        case "vehiclesForm":
+            vehiclesForm.style.display = "inline";
+            break;
+
+        case "billsForm":
+            billsForm.style.display = "inline";
+            break;
+    }
+}

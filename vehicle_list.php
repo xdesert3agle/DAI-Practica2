@@ -61,9 +61,9 @@
 							<th colspan="8" class="text-right">
 								<form action="" method="POST" class="p-0 m-0">
 									<input type="hidden" id="client_id" name="client_id" value="<?php echo $bill['id_cliente']?>" />
-									<button type="submit" class="btn btn-danger p-1 mr-2" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar los coches seleccionados de la base de datos?');">Eliminar seleccionados</button>
+									<button type="submit" class="btn btn-danger btn-sm" value="delete_selected" onClick="return confirm('¿Estás segur@ de que quieres eliminar los coches seleccionados de la base de datos?');">Eliminar seleccionados</button>
 								</form>
-								<a href="register_vehicle.php" class="btn btn-dark p-1 mr-0" value="add_new">Añadir nuevo</a>
+								<a href="register_vehicle.php" class="btn btn-dark btn-sm" value="add_new">Añadir nuevo</a>
 							</th>
 						</tr>
 					</thead>
