@@ -103,7 +103,6 @@
 								</th>
 								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<img class="client-img" src="<?php echo $client->getPhoto() ?>" />
-
 								</td>
 								<td class="align-middle clickable" onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
 									<?php echo $client->getDni()?>

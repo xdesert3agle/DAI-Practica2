@@ -7,8 +7,6 @@
         private $host = "localhost";
         private $user = "root";
         private $pwd = "";
-        
-        const EMPTY_IMG = "";
   
         private function __construct() {
             $this->conn = new mysqli($this->host, $this->user, $this->pwd, $this->db);
@@ -40,6 +38,28 @@
             return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
 
+        public function getPlateListFromClientID($clientID){
+            $result = $this->conn->query("SELECT * FROM vehiculos WHERE id_cliente = $clientID");
+            $plateList = array();
+
+            for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+                $result = $result->fetch_assoc();
+
+                $plateList[$i] = $result['matricula'];
+            }
+
+            return $plateList;
+        }
+
+        public function getClientFromPlate($plate){
+            $result = $this->conn->query("SELECT * FROM vehiculos WHERE matricula = '$plate'")->fetch_assoc();
+            $clientID = $result['id_cliente'];
+
+            $result2 = $this->conn->query("SELECT * FROM clientes WHERE id_cliente = $clientID");
+
+            return Client::parseClient($result2);
+        }
+
 // -----------------------------------------  M É T O D O S  S O B R E  L A  T A B L A  V E H I C U L O S  -----------------------------------------
 
         // Devuelve el vehículo con una determinada ID
@@ -68,11 +88,12 @@
         }
 
 
-        public function getClientList($owner = -1) {
+        public function getClientList($owner = -1, $label = -1, $emptySlot = 0) {
             $clientList = $this->conn()->query("SELECT * FROM clientes");
 
-            $list = "<label for=\"selectOwnerList\">Dueño del vehículo</label>" .
-                      "<select class=\"form-control\" name=\"selectOwnerList\" id=\"selectOwnerList\">";
+            $list = $label !== 0 ? "<label for=\"selectOwnerList\">Dueño del vehículo</label>" : null;
+            $list = "<select class=\"form-control\" name=\"selectOwnerList\" id=\"selectOwnerList\">";
+            $list = $emptySlot !== 0 ? $list . "<option value='-1'>Selecciona un cliente</option>" : $list;
 
             for ($i = 0; $i < mysqli_num_rows($clientList); $i++) {
                 $client = Client::parseClient($clientList);
@@ -122,14 +143,14 @@
 
 // -----------------------------------------  M É T O D O S  S O B R E  L A  T A B L A  R E P U E S T O S  -----------------------------------------
 
-        // Devuelve el ID que le corresponde a una hipotético nuevo cliente (el valor del autoincrement)
+        // Devuelve el ID que le corresponde a una hipotética nueva factura (el valor del autoincrement)
         public function getNewBillID() {
             $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'FACTURA'");
 
             return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
 
-        // Devuelve el ID que le corresponde a una hipotético nuevo cliente (el valor del autoincrement)
+        // Devuelve el ID que le corresponde a una hipotética nueva línea de factura (el valor del autoincrement)
         public function getNewBillLineID() {
             $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'DETALLE_FACTURA'");
 

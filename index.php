@@ -66,7 +66,7 @@
             <hr>
             
             <div id="clientsForm" style="display: none">
-                <form action="" method="POST">
+                <form action="" method="GET">
                     <input type="hidden" name="action" value="filter_clients">
                     <div class="form-group">
                         <label for="clientName">Nombre</label>
@@ -92,11 +92,11 @@
                         <label for="clientName">Teléfono</label>
                         <input type="text" class="form-control" name="clientTelephone" id="clientTelephone">
                     </div>
-                    <button type="submit" class="btn btn-primary" name="filter_clients">Filtrar clientes</button>
+                    <button type="submit" class="btn btn-primary">Filtrar clientes</button>
                 </form>
             </div>
             <div id="vehiclesForm" style="display: none">
-                <form action="" method="POST">
+                <form action="" method="GET">
                     <input type="hidden" name="action" value="filter_vehicles">
                     <div class="form-group">
                         <label for="clientName">Marca</label>
@@ -114,33 +114,67 @@
                         <label for="clientName">Color</label>
                         <input type="text" class="form-control" name="vehicleColor" id="vehicleColor">
                     </div>
-                    <button type="submit" class="btn btn-primary" name="filter_vehicles">Filtrar vehículos</button>
+                    <button type="submit" class="btn btn-primary">Filtrar vehículos</button>
                 </form>
             </div>
             <div id="billsForm" style="display: none">
-                <form action="" method="POST">
+                <form action="" method="GET">
+                    <input type="hidden" name="action" value="filter_bills">
                     <div class="form-group">
-                        <label for="clientName">Fecha de inicio</label>
-                        <input type="text" class="form-control" name="billCreationStart" id="billCreationStart">
-                        <input type="text" class="form-control" name="billCreationEnd" id="billCreationEnd">
+                        <h4>Emitidas entre dos fechas</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="billCreationStart">Fecha de inicio</label>
+                                <input type="text" class="form-control" name="billCreationStart" id="billCreationStart">
+                            </div>
+                            <div class="col-6">
+                                <label for="billCreationEnd">Fecha fin</label>
+                                <input type="text" class="form-control" name="billCreationEnd" id="billCreationEnd">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="clientName">Modelo</label>
-                        <input type="text" class="form-control" name="clientSurname1" id="clientSurname1">
+                        <h4>Pagadas entre dos fechas</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="clientName">Fecha de inicio</label>
+                                <input type="text" class="form-control" name="billPaymentStart" id="billPaymentStart">
+                            </div>
+                            <div class="col-6">
+                                <label for="clientName">Fecha fin</label>
+                                <input type="text" class="form-control" name="billPaymentEnd" id="billPaymentEnd">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="clientName">Año</label>
-                        <input type="text" class="form-control" name="clientSurname2" id="clientSurname2">
+                        <h4>Sólo pendientes de pago</h4>
+                        <div class="row" style="margin-left: 20px;">
+                            <input type="checkbox" class="form-check-input" id="onlyNonPayedBills" name="onlyNonPayedBills">
+                            <label class="form-check-label" for="onlyNonPayedBills">Mostrar sólo facturas pendientes de pago</label>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="clientName">Color</label>
-                        <input type="text" class="form-control" name="clientLocation" id="clientLocation">
+                        <h4>De un determinado cliente</h4>
+                        <?php
+
+                            echo $db->getClientList(-1, 0, 1);
+
+                        ?>
                     </div>
-                    <button type="submit" class="btn btn-primary" name="filter_bills">Filtrar facturas</button>
+                    <button type="submit" class="btn btn-primary">Filtrar facturas</button>
                 </form>
             </div>
 
             <table class="table table-hover">
+            <?php
+
+                $action = isset($_GET['action']) ? $_GET['action'] : null;
+
+                switch ($action) {
+                    case "filter_clients":
+
+
+            ?>
                 <thead class="thead-light">
                     <tr>
                         <th>#</th>
@@ -156,156 +190,230 @@
                         <th>E-mail</th>
                     </tr>
                 </thead>
-                <?php
-
-                    if (isset($_POST['filter_clients'])) {
-                        $clientName = isset($_POST['clientName']) ? $_POST['clientName'] : null;
-                        $clientSurname1 = isset($_POST['clientSurname1']) ? $_POST['clientSurname1'] : null;
-                        $clientSurname2 = isset($_POST['clientSurname2']) ? $_POST['clientSurname2'] : null;
-                        $clientLocation = isset($_POST['clientLocation']) ? $_POST['clientLocation'] : null;
-                        $clientProvince = isset($_POST['$clientProvince']) ? $_POST['$clientProvince'] : null;
-                        $clientTelephone = isset($_POST['$clientTelephone']) ? $_POST['$clientTelephone'] : null;
-
-                        if ($clientName != null && $clientSurname1 != null && $clientSurname2 != null && $clientLocation != null && $clientProvince != null && $clientTelephone != null) {
-                            $query =  "SELECT * FROM clientes";
-
-                        } else {
-                            $query = "SELECT * FROM clientes WHERE";
-
-                            if ($clientName != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND";
-                                }
-                                $query .= " nombre = '$clientName'";
-                            }
-
-                            if ($clientSurname1 != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND ";
-                                }
-                                $query .= " apellido1 = '$clientSurname1'";
-                            }
-
-                            if ($clientSurname2 != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND ";
-                                }
-                                $query .= " apellido2 = '$clientSurname2'";
-                            }
-
-                            if ($clientLocation != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND ";
-                                }
-                                $query .= " poblacion = '$clientLocation'";
-                            }
-
-                            if ($clientProvince != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND ";
-                                }
-                                $query .= " provincia = '$clientProvince'";
-                            }
-
-                            if ($clientTelephone != null) {
-                                $pieces = explode(' ', $query);
-                                $last_word = array_pop($pieces);
-
-                                if ($last_word != "WHERE") {
-                                    $query .= " AND ";
-                                }
-                                $query .= " telefono = '$clientTelephone'";
-                            }
-
-                            $pieces = explode(' ', $query);
-                            $last_word = array_pop($pieces);
-
-                            if ($last_word == "WHERE") {
-                                $query = preg_replace('/\W\w+\s*(\W*)$/', '$1', $query);
-                            }
-
-                            $result = $db->conn()->query($query);
-
-                            for ($i = 0; $i < mysqli_num_rows($result); $i++) {
-                                $client = Client::parseClient($result);
-
-
-                                ?>
-                                <tbody>
-                                <tr>
-                                    <th scope="row" class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getId(); ?>
-                                    </th>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <img class="client-img" src="<?php echo $client->getPhoto() ?>"/>
-
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getDni() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getName() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getSurname1() . ' ' . $client->getSurname2() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getAddress() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getPostalCode() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getLocation() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getProvince() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getTelephone() ?>
-                                    </td>
-                                    <td class="align-middle clickable"
-                                        onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
-                                        <?php echo $client->getEmail() ?>
-                                    </td>
-                                </tr>
-                                </tbody>
                     <?php
 
+                        $fields = array("nombre", "apellido1", "apellido2", "poblacion", "provincia", "telefono");
+                        $values = array($_GET['clientName'], $_GET['clientSurname1'], $_GET['clientSurname2'], $_GET['clientLocation'], $_GET['clientProvince'], $_GET['clientTelephone']);
+                        $query = "SELECT * FROM clientes ";
+
+                        $i = 0;
+                        foreach ($fields as $key) {
+                            if ($values[$i] != "") {
+                                if ($i > 0) {
+                                    $query .= " AND ";
+                                } else {
+                                    $query .= " WHERE ";
+                                }
+
+                                $query .= $key . " = '" . $db->conn()->real_escape_string($values[$i]) . "'";
+                            }
+
+                            $i++;
+                        }
+
+                        $result = $db->conn()->query($query);
+
+                        for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+                            $client = Client::parseClient($result);
+
+                    ?>
+                <tbody>
+                    <tr>
+                        <th scope="row" class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getId(); ?>
+                        </th>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <img class="client-img" src="<?php echo $client->getPhoto() ?>"/>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getDni() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getName() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getSurname1() . ' ' . $client->getSurname2() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getAddress() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getPostalCode() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getLocation() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getProvince() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getTelephone() ?>
+                        </td>
+                        <td class="align-middle clickable"
+                            onclick="listElementDetails('edit_client.php?client_id=<?php echo $client->getId(); ?>')">
+                            <?php echo $client->getEmail() ?>
+                        </td>
+                    </tr>
+                </tbody>
+                <?php
+                        }
+
+                        break;
+
+                    case "filter_vehicles":
+
+                ?>
+                <thead class="thead-light">
+                    <tr>
+                        <th># Vehículo</th>
+                        <th>Matrícula</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th>Color</th>
+                        <th>Propietario</th>
+                    </tr>
+                </thead>
+                    <?php
+
+                        $fields = array("marca", "modelo", "anio", "color");
+                        $values = array($_GET['vehicleBrand'], $_GET['vehicleModel'], $_GET['vehicleYear'], $_GET['vehicleColor']);
+                        $query = "SELECT * FROM vehiculos ";
+
+                        $i = 0;
+                        foreach ($fields as $key) {
+                            if ($values[$i] != "") {
+                                if ($i > 0) {
+                                    $query .= " AND ";
+                                } else {
+                                    $query .= " WHERE ";
+                                }
+
+                                $query .= $key . " = '" . $db->conn()->real_escape_string($values[$i]) . "'";
+                            }
+
+                            $i++;
+                        }
+
+                        $result = $db->conn()->query($query);
+
+                        for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+                            $vehicle = Vehicle::parseVehicle($result);
+
+                    ?>
+                <tbody>
+                    <tr>
+                        <th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getId(); ?>
+                        </th>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getPlate() ?>
+                        </td>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getBrand() ?>
+                        </td>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getModel() ?>
+                        </td>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getYear() ?>
+                        </td>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getColor() ?>
+                        </td>
+                        <td class="align-middle clickable" onclick="listElementDetails('edit_vehicle.php?vehicle_id=<?php echo $vehicle->getId(); ?>')">
+                            <?php echo $vehicle->getClientID() ?>
+                        </td>
+                    </tr>
+                </tbody>
+                <?php
+                        }
+
+                        break;
+
+                    case "filter_bills":
+                        $billCreationStart = isset($_GET['billCreationStart']) ? $_GET['billCreationStart'] : null;
+                        $billCreationEnd = isset($_GET['billCreationEnd']) ? $_GET['billCreationEnd'] : null;
+                        $billPaymentStart = isset($_GET['billPaymentStart']) ? $_GET['billPaymentStart'] : null;
+                        $billPaymentEnd = isset($_GET['billPaymentEnd']) ? $_GET['billPaymentEnd'] : null;
+                        $onlyNonPayedBills = isset($_GET['onlyNonPayedBills']) ? true : false;
+                        $owner = $_GET['selectOwnerList'];
+
+                        $query = "SELECT * FROM factura WHERE";
+
+                        // Ha usado la opción de 'Emitidas entre dos fechas'
+                        if ($billCreationStart != null || $billCreationEnd != null) {
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            if ($billCreationStart != null) {
+                                $query .= " fecha_emision >= '$billCreationStart'";
+                            }
+
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            if ($billCreationEnd != null) {
+                                $query .= " fecha_emision <= '$billCreationEnd'";
                             }
                         }
 
-                    } elseif (isset($_POST['filter_vehicles'])) {
+                        // Ha usado la opción de 'Pagadas entre dos fechas'
+                        if ($billPaymentStart != null || $billPaymentEnd != null) {
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            if ($billPaymentStart != null) {
+                                $query .= " fecha_pago >= '$billPaymentStart'";
+                            }
+
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            if ($billPaymentEnd != null) {
+                                $query .= " fecha_pago <= '$billPaymentEnd'";
+                            }
+                        }
+
+                        if ($onlyNonPayedBills) {
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            $query .= " fecha_pago NOT NULL";
+                        }
+
+                        if ($owner != -1) {
+                            if (substr($query, strrpos($query, ' ') + 1) !== "WHERE") {
+                                $query .= " AND";
+                            }
+
+                            $clientName = $db->conn()->query("SELECT * FROM clientes WHERE id_cliente = $owner");
 
 
-                    } elseif (isset($_POST['filter_bills'])) {
+                            $plateList = $db->getPlateListFromClientID($db->getClientFromPlate());
+                        }
 
+                        $lastWord = substr($query, strrpos($query, ' ') + 1);
 
+                        $query = $lastWord !== "WHERE" ? $query : preg_replace('/\W\w+\s*(\W*)$/', '$1', $query);
+
+                        echo $query;
+                        break;
                     }
 
                 ?>
