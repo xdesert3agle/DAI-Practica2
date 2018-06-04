@@ -11,7 +11,7 @@
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
-						<a class="nav-link" href="client_list.php">Clientes</a>
+						<a class="nav-link active" href="client_list.php">Clientes</a>
                     </li>
 					<li class="nav-item">
 						<a class="nav-link" href="vehicle_list.php">Vehículos</a>
@@ -19,6 +19,9 @@
                     <li class="nav-item">
 						<a class="nav-link" href="replacement_list.php">Repuestos</a>
 					</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bill_list.php">Facturas</a>
+                    </li>
 				</ul>
 			</div>
 			<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">

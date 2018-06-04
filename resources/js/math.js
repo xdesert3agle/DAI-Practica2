@@ -36,15 +36,13 @@ function doTheMath(){
     for (var i = 1; i <= numberOfLines; i++){
         let amount = document.getElementById('rep' + i + "_amount").innerText.match(pattern);
         calc += !isNaN(parseFloat(amount)) ? parseFloat(amount) : 0;
-
-        console.log(calc);
     }
 
     calc += parseFloat(workPrice);
 
     base.value = !isNaN(calc) ? calc : 0;
     iva.value = (base.value * 0.21).toFixed(2);
-    total.value = parseFloat(base.value) + parseFloat(iva.value);
+    total.value = (parseFloat(base.value) + parseFloat(iva.value)).toFixed(2);
 }
 
 function calcWorkPrice(){

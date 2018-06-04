@@ -10,7 +10,7 @@
 
 	$db = Database::getInstance();
 
-	$bill_list = $db->conn()->query("SELECT * FROM factura");
+	$bill_list = $db->conn()->query("SELECT * FROM factura ORDER BY numero_factura");
 
 ?>
 <html>
@@ -104,10 +104,10 @@
                                 <?php echo $bill['matricula'] ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['horas'] ?>
+                                <?php echo $bill['horas'] . " h" ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['precio_hora'] ?>
+                                <?php echo $bill['precio_hora'] . " €/h" ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
                                 <?php echo parseDateToYMD($bill['fecha_emision']) ?>
@@ -116,13 +116,13 @@
                                 <?php echo parseDateToYMD($bill['fecha_pago']) ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['base_imponible'] ?>
+                                <?php echo $bill['base_imponible'] . " €" ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['iva'] ?>
+                                <?php echo $bill['iva'] . " €" ?>
                             </td>
                             <td class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
-                                <?php echo $bill['total'] ?>
+                                <?php echo $bill['total'] . " €" ?>
                             </td>
                         </tr>
                         <?php

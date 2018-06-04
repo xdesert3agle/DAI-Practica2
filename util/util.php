@@ -20,7 +20,10 @@
 
     function parseDateToYMD($date){
         $splitDate = explode('-', $date);
-        $formattedDate = $splitDate[2]. '-' .$splitDate[1]. '-' .$splitDate[0];
+        if ($date != null) {
+            $formattedDate = $splitDate[2]. '-' .$splitDate[1]. '-' .$splitDate[0];
+            return $formattedDate;
+        }
 
-        return $formattedDate;
+        return "";
     }

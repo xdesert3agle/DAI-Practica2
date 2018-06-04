@@ -26,7 +26,7 @@
         $cph = $_POST['cph'];
         $workPrice = $_POST['workPrice'];
         $creationDate = $_POST['creationDate'];
-        $payedDate = $_POST['payedDate'];
+        $payedDate = $_POST['payedDate'] != "0000-00-00" ? $_POST['payedDate'] : null;
         $base = $_POST['base'];
         $iva = $_POST['iva'];
         $total = $_POST['total'];
@@ -43,7 +43,11 @@
         }
 
         // Se inserta primero la factura
-        $db->conn()->query("UPDATE factura SET matricula = '$plate', horas = $hours, precio_hora = $cph, mano_obra = $workPrice, fecha_emision = '$creationDate', fecha_pago = '$payedDate', base_imponible = $base, iva = $iva, total = $total WHERE numero_factura = $id");
+        if ($payedDate != null) {
+            $db->conn()->query("UPDATE factura SET matricula = '$plate', horas = $hours, precio_hora = $cph, mano_obra = $workPrice, fecha_emision = '$creationDate', fecha_pago = '$payedDate', base_imponible = $base, iva = $iva, total = $total WHERE numero_factura = $id");
+        } else {
+            $db->conn()->query("UPDATE factura SET matricula = '$plate', horas = $hours, precio_hora = $cph, mano_obra = $workPrice, fecha_emision = '$creationDate', fecha_pago = DEFAULT, base_imponible = $base, iva = $iva, total = $total WHERE numero_factura = $id");
+        }
 
         // Se van insertando todas las líneas de detalle de la factura en un bucle
         for ($i = 0; $i < count($replacementListValue); $i++){
@@ -75,8 +79,7 @@
                 let headers = document.getElementById('headers');
 
                 if (currentLine === 1) {
-                    console.log("headers");
-                    headers.innerHTML = "<tr><th>Pieza de repuesto</th><th>Cantidad</th><th>Precio</th><th>Porcentaje de ganancia</th><th>Importe</th></tr>";
+                    headers.innerHTML = "<tr><th># Repuesto</th><th>Pieza de repuesto</th><th>Cantidad</th><th>Precio</th><th>Porcentaje de ganancia</th><th>Importe</th></tr>";
                 }
 
                 replacement.innerHTML = "<?php echo $db->getReplacementListAsArray() ?>";
@@ -165,8 +168,8 @@
                         <input type="date" class="form-control" name="creationDate" id="creationDate" value="<?php echo $bill['fecha_emision'] ?>" required="required">
                     </div>
                     <div class="form-group col-sm">
-                        <label for="payedDate">Fecha de pago*</label>
-                        <input type="date" class="form-control" name="payedDate" id="payedDate" value="<?php echo $bill['fecha_pago'] ?>" required="required">
+                        <label for="payedDate">Fecha de pago</label>
+                        <input type="date" class="form-control" name="payedDate" id="payedDate" value="<?php echo $bill['fecha_pago'] ?>">
                     </div>
                 </div>
                 <div class="row">

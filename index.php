@@ -411,7 +411,7 @@
                                 $query .= " AND";
                             }
 
-                            $query .= " fecha_pago NOT NULL";
+                            $query .= " fecha_pago IS NOT NULL";
                         }
 
                         if ($owner != -1) {
@@ -451,7 +451,8 @@
 
                         for ($i = 0; $i < mysqli_num_rows($result); $i++) {
                             $bill = $result->fetch_assoc();
-                            ?>
+
+                        ?>
                             <tbody>
                                 <tr>
                                     <th scope="row" class="align-middle clickable" onclick="listElementDetails('edit_bill.php?bill_id=<?php echo $bill['numero_factura'] ?>')">
