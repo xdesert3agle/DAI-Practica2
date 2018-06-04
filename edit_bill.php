@@ -17,16 +17,40 @@
 
     // Botón de editar vehículo
     if (isset($_POST['edit_bill'])){
-        $id = $_POST['id'][0];
-        $plate = $_POST['plate'];
-        $owner = $_POST['selectOwnerList'];
-        $brand = $_POST['brand'];
-        $model = $_POST['model'];
-        $year = $_POST['year'];
-        $color = $_POST['color'];
 
-        $db->conn()->query("UPDATE VEHICULOS SET MATRICULA = '$plate', MARCA ='$brand', MODELO ='$model', ANIO = '$year', COLOR ='$color', ID_CLIENTE = '$owner' WHERE ID_VEHICULO = '$id'");
-        header("Location: vehicle_list.php");
+        // Factura
+        $id = $_POST['id'];
+        $plateID = $_POST['selectVehicleList'];
+        $plate = Vehicle::parseVehicle($db->conn()->query("SELECT * FROM vehiculos WHERE id_vehiculo = $plateID"))->getPlate();
+        $hours = $_POST['hours'];
+        $cph = $_POST['cph'];
+        $workPrice = $_POST['workPrice'];
+        $creationDate = $_POST['creationDate'];
+        $payedDate = $_POST['payedDate'];
+        $base = $_POST['base'];
+        $iva = $_POST['iva'];
+        $total = $_POST['total'];
+
+        // Líneas de factura
+        $replacementListValue = $_POST['selectReplacementList'];
+        $lineID = $_POST['lineID'];
+        $units = $_POST['units'];
+        $amount = $_POST['amount'];
+
+        // Se sacan los nombres de cada pieza añadida a la factura
+        for ($i = 0; $i < count($replacementListValue); $i++) {
+            $replacementListName[$i] = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE id_repuesto = $replacementListValue[$i]"))->getRef();
+        }
+
+        // Se inserta primero la factura
+        $db->conn()->query("UPDATE factura SET matricula = '$plate', horas = $hours, precio_hora = $cph, mano_obra = $workPrice, fecha_emision = '$creationDate', fecha_pago = '$payedDate', base_imponible = $base, iva = $iva, total = $total WHERE numero_factura = $id");
+
+        // Se van insertando todas las líneas de detalle de la factura en un bucle
+        for ($i = 0; $i < count($replacementListValue); $i++){
+            $db->conn()->query("UPDATE detalle_factura SET referencia = '$replacementListName[$i]', unidades = $units[$i] WHERE id_det_factura = $lineID[$i]");
+        }
+
+        //header("Location: bill_list.php");
     }
 
 ?>
@@ -82,7 +106,7 @@
             }
         </script>
 	</head>
-    <body>
+    <body onLoad="doTheMath();">
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<a class="navbar-brand" href="index.php">Taller</a>
 			<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarNav">
@@ -123,7 +147,7 @@
                 <div class="row">
                     <div class="form-group col-1">
                         <label for="id_disabled">ID</label>
-                        <input type="text" class="form-control" id="id_disabled" name="id_disabled" value="<?php echo $bill['numero_factura']; ?>" disabled>
+                        <input type="text" class="form-control" id="id" name="id" value="<?php echo $bill['numero_factura']; ?>" readonly>
                     </div>
                     <div class="form-group col-2">
                         <?php echo $db->getVehicleList($bill['matricula']); ?>
@@ -198,6 +222,7 @@
                             </thead>
                             <thead id="headers">
                                 <tr>
+                                    <th># Línea</th>
                                     <th>Pieza de repuesto</th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
@@ -210,20 +235,26 @@
 
                                 $id = $bill['numero_factura'];
 
-                                $lineCount = $db->conn()->query("SELECT COUNT(*) AS LINE_COUNT FROM detalle_factura WHERE numero_factura = $id")->fetch_assoc()['LINE_COUNT'];
+                                $lineList = $db->conn()->query("SELECT * FROM detalle_factura WHERE numero_factura = $id");
 
-                                for ($i = 0; $i < $lineCount; $i++) {
-                                    $line = $db->conn()->query("SELECT * FROM detalle_factura WHERE numero_factura = $id")->fetch_assoc();
+                                for ($i = 1; $i <= mysqli_num_rows($lineList); $i++) {
+                                    $line = $lineList->fetch_assoc();
+
                                     $replacementRef = $line['referencia'];
                                     $replacement = Replacement::parseReplacement($db->conn()->query("SELECT * FROM repuestos WHERE referencia = '$replacementRef'"));
+                                    $amount = $replacement->getPrice() * $line['unidades'] * ((100 + $replacement->getPercent()) / 100);
                             ?>
                                     <tr>
                                         <td>
-                                            <?php echo $db->getReplacementListAsArray($line['referencia']); ?>
+                                            <input type="text" class="form-control" name="lineID[]" value="<?php echo $line['id_det_factura'] ?>" readonly>
+                                        </td>
+                                        <td>
+                                            <?php echo $db->getReplacementListAsArray($line['referencia'], $i); ?>
                                         </td>
                                         <td>
                                             <input type='number' class='form-control' name='units[]' id='units<?php echo $i ?>' data-row='<?php echo $i ?>' value="<?php echo $line['unidades'] ?>" onInput='calcLinePrice(this); doTheMath();' required>
                                             <input type="hidden" id='row<?php echo $i ?>_price'>
+                                            <input type="hidden" name="amount[]" value="<?php echo $amount ?>">
                                         </td>
                                         <td class="align-middle" id="rep<?php echo $i ?>_price">
                                             <?php echo $replacement->getPrice() . " €" ?>
@@ -232,7 +263,7 @@
                                             <?php echo $replacement->getPercent() . " %" ?>
                                         </td>
                                         <td class="align-middle" id="rep<?php echo $i ?>_amount">
-                                            <?php echo $replacement->getPercent() . " %" ?>
+                                            <?php echo $amount . " €" ?>
                                         </td>
                                     </tr>
 
@@ -244,6 +275,7 @@
                             </tbody>
                         </table>
                         <div id="add_bill"></div>
+                        <button type='submit' class='btn btn-primary' style='margin-left: -2px;' form='createBill' name='edit_bill' id='btnEditBill'>Editar factura</button>
                     </div>
                 </div>
             </form>

@@ -1,12 +1,10 @@
 function calcLinePrice(changedElement){
-    let changedRowNumber = changedElement.getAttribute('data-row');
+    let changedRowNumber = parseInt(changedElement.getAttribute('data-row'));
     let selReplacementList = document.getElementById('selectReplacementList' + changedRowNumber);
     let selectedReplacementPrice = parseInt(selReplacementList.options[selReplacementList.selectedIndex].getAttribute('data-price'));
     let selectedReplacementPercent = parseInt(selReplacementList.options[selReplacementList.selectedIndex].getAttribute('data-percent'));
     let units = parseInt(document.getElementById('units' + changedRowNumber).value);
     let amount = document.getElementById('rep' + changedRowNumber + '_amount');
-    let amountHidden = document.getElementById('rep' + changedRowNumber + '_hAmount');
-    console.log(amountHidden.value);
 
     let changedRowPriceContainer = document.getElementById('row' + changedRowNumber + '_price');
     changedRowPriceContainer.value = units * selectedReplacementPrice;
@@ -14,7 +12,6 @@ function calcLinePrice(changedElement){
     let gain = changedRowPriceContainer.value * (selectedReplacementPercent / 100);
 
     amount.innerHTML = !isNaN(changedRowPriceContainer.value) ? parseInt(changedRowPriceContainer.value) + gain + " €" : "0 €";
-    amountHidden.value = parseFloat(amount.innerHTML.slice(0, -2));
 }
 
 function changePrice(replacementList){
@@ -39,6 +36,8 @@ function doTheMath(){
     for (var i = 1; i <= numberOfLines; i++){
         let amount = document.getElementById('rep' + i + "_amount").innerText.match(pattern);
         calc += !isNaN(parseFloat(amount)) ? parseFloat(amount) : 0;
+
+        console.log(calc);
     }
 
     calc += parseFloat(workPrice);

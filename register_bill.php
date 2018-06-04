@@ -29,7 +29,6 @@
         // Líneas de factura
         $replacementListValue = $_POST['selectReplacementList'];
         $units = $_POST['units'];
-        $amount = $_POST['amount'];
 
         // Se sacan los nombres de cada pieza añadida a la factura
         for ($i = 0; $i < count($replacementListValue); $i++) {
@@ -41,7 +40,7 @@
 
         // Se van insertando todas las líneas de detalle de la factura en un bucle
         for ($i = 0; $i < count($replacementListValue); $i++){
-            $db->conn()->query("INSERT INTO detalle_factura (numero_factura, referencia, unidades, subtotal) VALUES ($id, '$replacementListName[$i]', $units[$i], $amount[$i])");
+            $db->conn()->query("INSERT INTO detalle_factura (numero_factura, referencia, unidades) VALUES ($id, '$replacementListName[$i]', $units[$i])");
         }
 
         header("Location: bill_list.php");
@@ -59,11 +58,12 @@
                 let table = document.getElementById('billLines');
                 let row = table.insertRow(table.rows.length);
 
-                let replacement = row.insertCell(0);
-                let quantity = row.insertCell(1);
-                let price = row.insertCell(2);
-                let gainPercent = row.insertCell(3);
-                let subtotal = row.insertCell(4);
+                let lineID = row.insertCell(0);
+                let replacement = row.insertCell(1);
+                let quantity = row.insertCell(2);
+                let price = row.insertCell(3);
+                let gainPercent = row.insertCell(4);
+                let subtotal = row.insertCell(5);
 
                 let currentLine = table.rows.length;
                 let headers = document.getElementById('headers');
@@ -79,9 +79,10 @@
                 newSelect.id = 'selectReplacementList' + currentLine;
                 newSelect.setAttribute("data-row", currentLine);
 
+                lineID.innerHTML = "<input type='text' class='form-control' name='lineID[]' id='lineID"+ currentLine +"' value='<?php echo $db->getNewBillLineID() ?>' readonly>";
+                document.getElementById('lineID' + currentLine).value = parseInt(document.getElementById('lineID' + currentLine).value) + currentLine - 1;
                 quantity.innerHTML = "<input type='number' class='form-control' name='units[]' id='units" + currentLine + "' data-row='" + currentLine + "' value='0' onInput='calcLinePrice(this); doTheMath();' required>";
                 quantity.innerHTML += "<input type='hidden' id='row" + currentLine + "_price'>";
-                quantity.innerHTML += "<input type='hidden' id='rep" + currentLine + "_hAmount' name='amount[]' value='0'>";
 
                 price.classList.add("align-middle");
                 price.id = "rep" + currentLine + "_price";

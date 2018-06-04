@@ -100,10 +100,15 @@
             return $list;
         }
 
-        public function getReplacementListAsArray($selected = -1) {
+        public function getReplacementListAsArray($selected = -1, $count = -1) {
             $replacementList = $this->conn()->query("SELECT * FROM repuestos");
 
-            $list = "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList' onChange='changePrice(this); calcLinePrice(this); doTheMath();'>";
+            if ($count != -1) {
+                $list = "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList$count' data-row='$count' onChange='changePrice(this); calcLinePrice(this); doTheMath();'>";
+            } else {
+                $list = "<select class='form-control' name='selectReplacementList[]' id='selectReplacementList' onChange='changePrice(this); calcLinePrice(this); doTheMath();'>";
+            }
+
 
             for ($i = 0; $i < mysqli_num_rows($replacementList); $i++) {
                 $replacement = Replacement::parseReplacement($replacementList);
@@ -123,4 +128,13 @@
 
             return $result->fetch_assoc()['AUTO_INCREMENT'];
         }
+
+        // Devuelve el ID que le corresponde a una hipotético nuevo cliente (el valor del autoincrement)
+        public function getNewBillLineID() {
+            $result = $this->conn()->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'taller' AND TABLE_NAME = 'DETALLE_FACTURA'");
+
+            return $result->fetch_assoc()['AUTO_INCREMENT'];
+        }
+
+
 }
