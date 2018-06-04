@@ -43,7 +43,7 @@ function doTheMath(){
     calc += parseFloat(workPrice);
 
     base.value = !isNaN(calc) ? calc : 0;
-    iva.value = base.value * 0.21;
+    iva.value = (base.value * 0.21).toFixed(2);
     total.value = parseFloat(base.value) + parseFloat(iva.value);
 }
 

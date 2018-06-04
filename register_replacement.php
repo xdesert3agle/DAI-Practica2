@@ -63,7 +63,7 @@
             $insert_query = "INSERT INTO REPUESTOS (REFERENCIA, DESCRIPCION, IMPORTE, PORCENTAJE, FOTOGRAFIA) VALUES ('$reference', '$description', '$price', '$percent', '$photo')";
 
             $db->conn()->query($insert_query);
-            //header("Location: replacement_list.php");
+            header("Location: replacement_list.php");
         }
     }
 

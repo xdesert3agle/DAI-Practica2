@@ -125,11 +125,11 @@
                         <div class="row">
                             <div class="col-6">
                                 <label for="billCreationStart">Fecha de inicio</label>
-                                <input type="text" class="form-control" name="billCreationStart" id="billCreationStart">
+                                <input type="date" class="form-control" name="billCreationStart" id="billCreationStart">
                             </div>
                             <div class="col-6">
                                 <label for="billCreationEnd">Fecha fin</label>
-                                <input type="text" class="form-control" name="billCreationEnd" id="billCreationEnd">
+                                <input type="date" class="form-control" name="billCreationEnd" id="billCreationEnd">
                             </div>
                         </div>
                     </div>
@@ -138,11 +138,11 @@
                         <div class="row">
                             <div class="col-6">
                                 <label for="clientName">Fecha de inicio</label>
-                                <input type="text" class="form-control" name="billPaymentStart" id="billPaymentStart">
+                                <input type="date" class="form-control" name="billPaymentStart" id="billPaymentStart">
                             </div>
                             <div class="col-6">
                                 <label for="clientName">Fecha fin</label>
-                                <input type="text" class="form-control" name="billPaymentEnd" id="billPaymentEnd">
+                                <input type="date" class="form-control" name="billPaymentEnd" id="billPaymentEnd">
                             </div>
                         </div>
                     </div>

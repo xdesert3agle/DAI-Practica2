@@ -77,32 +77,39 @@
 				} else {
 
 			?>
-			<div class="container" style="margin-top: 15px">
-				<h1>Acceso administrador</h1>
-				<hr>
+			<div class="container">
 
-				<form action="" method="POST">
-					<legend>Acceso administrador</legend>
-					<div class="form-group">
-						<label for="user">Usuario</label>
-						<input type="text" class="form-control" id="user" name="user" placeholder="Nombre de usuario">
-					</div>
-					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" id="password" name="password" placeholder="Contraseña">
-					</div>
-					<button type="submit" class="btn btn-dark">Identificarse</button>
-				</form>
-			<?php
+                <div class="h-90 row align-items-center">
+                    <div class="col">
+                        <h1>Acceso administrador</h1>
+                        <hr>
 
-					if ($loginError) {
-						echo '<div class="alert alert-danger" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">'
-							. '<p class="mb-0"><strong>Error en el login</strong>: Credenciales incorrectas.</p>'
-							. '</div>';
-					}
+                        <form action="" method="POST">
+                            <div class="form-group">
+                                <label for="user">Usuario</label>
+                                <input type="text" class="form-control" id="user" name="user" placeholder="Nombre de usuario">
+                                <small class="form-text text-muted">Usuario admin: miguelangel</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Contraseña</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña">
+                                <small class="form-text text-muted">Contraseña admin: 2018dai</small>
+                            </div>
+                            <button type="submit" class="btn btn-dark">Identificarse</button>
+                        </form>
+                        <?php
 
-			?>
-			</div>
+                        if ($loginError) {
+                            echo '<div class="alert alert-danger" role="alert" style="margin-top: 1.5em; margin-bottom: 2em;">'
+                                . '<p class="mb-0"><strong>Error en el login</strong>: Credenciales incorrectas.</p>'
+                                . '</div>';
+                        }
+
+                        ?>
+                    </div>
+                    </div>
+                </div>
+
 			<?php
 			
 				}
